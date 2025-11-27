@@ -167,6 +167,12 @@
                         </button>
                         <input type="file" id="importFile" accept=".json" style="display: none;"
                             onchange="importData(this)">
+                        <button class="btn btn-secondary" id="shareEmailBtn" onclick="shareViaEmail()">
+                            📧 Enviar por Email
+                        </button>
+                        <button class="btn btn-secondary" id="shareWhatsAppBtn" onclick="shareViaWhatsApp()">
+                            💬 Enviar por WhatsApp
+                        </button>
                     </div>
                 </div>
             </section>
@@ -483,55 +489,21 @@
                     <button type="submit" class="btn btn-primary">
                         Guardar Palabra
                     </button>
-                </div>
-            </form>
-        </div>
     </div>
 
-    <!-- Word Details Modal -->
-    <div id="wordDetailsModal" class="modal" role="dialog" aria-labelledby="detailWordTitle" aria-modal="true">
+    <!-- Book Details Modal -->
+    <div id="bookDetailsModal" class="modal" role="dialog" aria-labelledby="detailTitle" aria-modal="true">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 class="modal-title">Editar Palabra</h2>
-                <button class="modal-close" id="closeWordDetailsModal" aria-label="Cerrar modal">×</button>
+                <h2 class="modal-title">Detalles del Libro</h2>
+                <button class="modal-close" id="closeDetailsModal" aria-label="Cerrar modal">×</button>
             </div>
 
-            <form id="editWordForm">
-                <div class="form-group">
-                    <label for="detailWordText" class="form-label">Palabra</label>
-                    <input type="text" id="detailWordText" class="form-input" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="detailWordLanguage" class="form-label">Idioma</label>
-                    <select id="detailWordLanguage" class="form-input" required>
-                        <option value="es">🇪🇸 Español</option>
-                        <option value="en">🇬🇧 Inglés</option>
-                        <option value="fr">🇫🇷 Francés</option>
-                        <option value="de">🇩🇪 Alemán</option>
-                        <option value="it">🇮🇹 Italiano</option>
-                        <option value="pt">🇵🇹 Portugués</option>
-                        <option value="other">🌍 Otro</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="detailWordDefinition" class="form-label">Definición / Significado</label>
-                    <textarea id="detailWordDefinition" class="form-textarea" required rows="4"></textarea>
-                </div>
-
-                <div class="form-group">
-                    <label for="detailWordContext" class="form-label">Contexto / Frase de ejemplo</label>
-                    <textarea id="detailWordContext" class="form-textarea" required rows="3"></textarea>
-                </div>
-
-                <div class="modal-actions">
-                    <button type="button" class="btn btn-danger" id="deleteWordBtn">
-                        🗑️ Eliminar
-                    </button>
-                    <button type="submit" class="btn btn-primary">
-                        Guardar Cambios
-                    </button>
+            <div class="book-details-content">
+                <div class="detail-section">
+                    <h3 id="detailTitle" class="detail-section-title" style="font-size: 1.5rem; margin-bottom: 0.5rem;">
+                        Título del Libro</h3>
+                    <p id="detailAuthor" style="color: var(--text-secondary); font-size: 1.1rem;">Autor del Libro</p>
                     <div style="display: flex; gap: 0.5rem; margin-top: 1rem; flex-wrap: wrap;">
                         <span id="detailCategory" class="book-category-badge">Categoría</span>
                         <span id="detailLanguage" class="book-language-badge">Idioma</span>
@@ -625,10 +597,10 @@
                         💾 Guardar Cambios
                     </button>
                 </div>
-        </div>
+            </div>
 
-        <input type="hidden" id="currentBookId">
-    </div>
+            <input type="hidden" id="currentBookId">
+        </div>
     </div>
 
     <!-- Add Word Modal -->
@@ -725,7 +697,7 @@
                         🗑️ Eliminar
                     </button>
                     <button type="submit" class="btn btn-primary">
-                        Guardar Cambios
+                        💾 Guardar Cambios
                     </button>
                 </div>
             </form>
