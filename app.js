@@ -472,6 +472,451 @@ function getLanguageFlag(code) {
         'de': '🇩🇪',
         'it': '🇮🇹',
         'pt': '🇵🇹',
+        'other': '🌐'
+    };
+    return flags[code] || '🌐';
+}
+
+function getLanguageName(code) {
+    const names = {
+        'es': 'Español',
+        'en': 'Inglés',
+        'fr': 'Francés',
+        'de': 'Alemán',
+        'it': 'Italiano',
+        'pt': 'Portugués',
+        'other': 'Otro'
+    };
+    return names[code] || 'Otro';
+}
+
+function renderBooks(searchQuery = '') {
+    const filteredBooks = getFilteredAndSortedBooks(searchQuery);
+
+    if (filteredBooks.length === 0) {
+        booksGrid.classList.add('hidden');
+        emptyState.classList.remove('hidden');
+    } else {
+        booksGrid.classList.remove('hidden');
+        emptyState.classList.add('hidden');
+
+        booksGrid.innerHTML = filteredBooks.map(book => `
+            <div class="book-card" onclick="openBookDetails('${book.id}')">
+                <div class="book-header">
+                    <h3 class="book-title">${escapeHtml(book.title)}</h3>
+                    <p class="book-author">por ${escapeHtml(book.author)}</p>
+                    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                        <span class="book-category-badge">${getCategoryLabel(book.category)}</span>
+                        <span class="book-language-badge">${getLanguageFlag(book.language || 'es')} ${getLanguageName(book.language || 'es')}</span>
+                    </div>
+                </div>
+                
+                <div class="book-progress">
+                    <div class="progress-info">
+                        <span class="progress-label">${book.currentPage} / ${book.totalPages} páginas</span>
+                        <span class="progress-percentage">${book.percentage}%</span>
+                    </div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" style="width: ${book.percentage}%"></div>
+                    </div>
+                </div>
+                
+                ${book.rating > 0 ? `
+                    <div style="margin-top: 0.5rem; color: #ffd700; font-weight: bold;">
+                        ⭐ ${book.rating}/10
+                    </div>
+                ` : ''}
+            </div>
+        `).join('');
+    }
+}
+
+function getCategoryLabel(category) {
+    const labels = {
+        'want_to_read': '🎯 Quiero leer',
+        'reading': '📖 Leyendo',
+        'completed': '✅ Terminado',
+        'abandoned': '❌ No terminado'
+    };
+    return labels[category] || category;
+}
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+// ============================================
+// Modal Management
+// ============================================
+
+function openAddBookModal() {
+    addBookModal.classList.add('active');
+    addBookForm.reset();
+    document.getElementById('bookRating').value = 0;
+}
+
+function closeAddBookModal() {
+    addBookModal.classList.remove('active');
+}
+
+function openBookDetails(bookId) {
+    const book = getBook(bookId);
+    if (!book) return;
+
+    currentBookId = bookId;
+
+    document.getElementById('detailTitle').textContent = book.title;
+    document.getElementById('detailAuthor').textContent = `por ${book.author}`;
+    document.getElementById('detailCategory').textContent = getCategoryLabel(book.category);
+
+    // Language display
+    const langCode = book.language || 'es';
+    document.getElementById('detailLanguage').textContent = `${getLanguageFlag(langCode)} ${getLanguageName(langCode)}`;
+
+    document.getElementById('detailTotalPages').textContent = book.totalPages;
+    document.getElementById('detailProgressPercentage').textContent = `${book.percentage}%`;
+    document.getElementById('detailProgressBar').style.width = `${book.percentage}%`;
+    document.getElementById('detailCurrentPage').value = book.currentPage;
+    document.getElementById('detailPercentage').value = book.percentage;
+    document.getElementById('detailComments').value = book.comments;
+    document.getElementById('detailCategorySelect').value = book.category;
+    document.getElementById('detailLanguageSelect').value = langCode;
+    document.getElementById('detailRatingInput').value = book.rating || 0;
+
+    bookDetailsModal.classList.add('active');
+}
+
+function closeBookDetailsModal() {
+    bookDetailsModal.classList.remove('active');
+    currentBookId = null;
+}
+
+function openAddWordModal() {
+    addWordModal.classList.add('active');
+    addWordForm.reset();
+}
+
+function closeAddWordModalFunc() {
+    addWordModal.classList.remove('active');
+}
+
+function openWordDetails(wordId) {
+    const word = getWord(wordId);
+    if (!word) return;
+
+    currentWordId = wordId;
+
+    // Populate View Mode
+    document.getElementById('viewWordText').textContent = word.word;
+    document.getElementById('viewWordLanguage').textContent = `${getLanguageFlag(word.language)} ${getLanguageName(word.language)}`;
+    document.getElementById('viewWordDefinition').textContent = word.definition;
+    document.getElementById('viewWordContext').textContent = `"${word.context}"`;
+
+    // Populate Edit Mode (Form)
+    document.getElementById('detailWordText').value = word.word;
+    document.getElementById('detailWordLanguage').value = word.language;
+    document.getElementById('detailWordDefinition').value = word.definition;
+    document.getElementById('detailWordContext').value = word.context;
+
+    // Show View Mode, Hide Edit Mode
+    document.getElementById('wordViewMode').classList.remove('hidden');
+    document.getElementById('editWordForm').classList.add('hidden');
+
+    wordDetailsModal.classList.add('active');
+}
+
+function closeWordDetailsModalFunc() {
+    wordDetailsModal.classList.remove('active');
+    currentWordId = null;
+    // Reset to view mode for next time
+    setTimeout(() => {
+        if (document.getElementById('wordViewMode')) document.getElementById('wordViewMode').classList.remove('hidden');
+        if (document.getElementById('editWordForm')) document.getElementById('editWordForm').classList.add('hidden');
+    }, 300);
+}
+
+// ============================================
+// Event Handlers
+// ============================================
+
+// Navigation
+navTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+        const view = tab.dataset.view;
+
+        // Update tabs
+        navTabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+
+        // Update views
+        if (view === 'library') {
+            libraryView.classList.remove('hidden');
+            vocabularyView.classList.add('hidden');
+            renderBooks();
+        } else {
+            libraryView.classList.add('hidden');
+            vocabularyView.classList.remove('hidden');
+            renderVocabulary();
+        }
+    });
+});
+
+// Book Events
+addBookBtn.addEventListener('click', openAddBookModal);
+closeAddModal.addEventListener('click', closeAddBookModal);
+cancelAddBook.addEventListener('click', closeAddBookModal);
+closeDetailsModal.addEventListener('click', closeBookDetailsModal);
+
+// Vocabulary Events
+addWordBtn.addEventListener('click', openAddWordModal);
+closeAddWordModal.addEventListener('click', closeAddWordModalFunc);
+cancelAddWord.addEventListener('click', closeAddWordModalFunc);
+closeWordDetailsModal.addEventListener('click', closeWordDetailsModalFunc);
+
+// Vocabulary View/Edit Toggle Events
+const editWordBtn = document.getElementById('editWordBtn');
+if (editWordBtn) {
+    editWordBtn.addEventListener('click', () => {
+        document.getElementById('wordViewMode').classList.add('hidden');
+        document.getElementById('editWordForm').classList.remove('hidden');
+    });
+}
+
+const cancelEditWordBtn = document.getElementById('cancelEditWordBtn');
+if (cancelEditWordBtn) {
+    cancelEditWordBtn.addEventListener('click', () => {
+        document.getElementById('editWordForm').classList.add('hidden');
+        document.getElementById('wordViewMode').classList.remove('hidden');
+    });
+}
+
+const closeWordViewBtn = document.getElementById('closeWordViewBtn');
+if (closeWordViewBtn) {
+    closeWordViewBtn.addEventListener('click', closeWordDetailsModalFunc);
+}
+
+// Theme toggle
+if (themeToggle) {
+    themeToggle.addEventListener('click', toggleTheme);
+}
+
+// Forms
+addBookForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    const title = document.getElementById('bookTitle').value;
+    const author = document.getElementById('bookAuthor').value;
+    const totalPages = document.getElementById('bookTotalPages').value;
+    const category = document.getElementById('bookCategory').value;
+    const language = document.getElementById('bookLanguage').value;
+    const currentPage = document.getElementById('bookCurrentPage').value || 0;
+    const rating = parseInt(document.getElementById('bookRating').value) || 0;
+    const comments = document.getElementById('bookComments').value;
+
+    const book = createBook(title, author, totalPages, category, language, currentPage, rating, comments);
+    addBook(book);
+
+    closeAddBookModal();
+});
+
+addWordForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    const word = document.getElementById('wordText').value;
+    const language = document.getElementById('wordLanguage').value;
+    const definition = document.getElementById('wordDefinition').value;
+    const context = document.getElementById('wordContext').value;
+
+    const wordObj = createWord(word, language, definition, context);
+    addWord(wordObj);
+
+    closeAddWordModalFunc();
+});
+
+editWordForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (!currentWordId) return;
+
+    const word = document.getElementById('detailWordText').value;
+    const language = document.getElementById('detailWordLanguage').value;
+    const definition = document.getElementById('detailWordDefinition').value;
+    const context = document.getElementById('detailWordContext').value;
+
+    updateWord(currentWordId, {
+        word: word.trim(),
+        language: language,
+        definition: definition.trim(),
+        context: context.trim()
+    });
+
+    // Update View Mode with new values
+    document.getElementById('viewWordText').textContent = word;
+    document.getElementById('viewWordLanguage').textContent = `${getLanguageFlag(language)} ${getLanguageName(language)}`;
+    document.getElementById('viewWordDefinition').textContent = definition;
+    document.getElementById('viewWordContext').textContent = `"${context}"`;
+
+    // Switch back to View Mode
+    document.getElementById('editWordForm').classList.add('hidden');
+    document.getElementById('wordViewMode').classList.remove('hidden');
+});
+
+deleteWordBtn.addEventListener('click', () => {
+    if (!currentWordId) return;
+
+    if (confirm('¿Estás seguro de que quieres eliminar esta palabra?')) {
+        deleteWord(currentWordId);
+        closeWordDetailsModalFunc();
+    }
+});
+
+document.getElementById('saveBookBtn').addEventListener('click', () => {
+    if (!currentBookId) return;
+
+    const currentPage = parseInt(document.getElementById('detailCurrentPage').value) || 0;
+    const percentage = parseInt(document.getElementById('detailPercentage').value) || 0;
+    const comments = document.getElementById('detailComments').value;
+    const category = document.getElementById('detailCategorySelect').value;
+    const language = document.getElementById('detailLanguageSelect').value;
+    const rating = parseInt(document.getElementById('detailRatingInput').value) || 0;
+
+    const book = getBook(currentBookId);
+    let updates = { comments, category, language, rating };
+
+    if (currentPage !== book.currentPage) {
+        updates.currentPage = currentPage;
+    } else if (percentage !== book.percentage && book.totalPages > 0) {
+        updates.currentPage = Math.round((percentage / 100) * book.totalPages);
+    }
+
+    updateBook(currentBookId, updates);
+    closeBookDetailsModal();
+});
+
+document.getElementById('deleteBookBtn').addEventListener('click', () => {
+    if (!currentBookId) return;
+
+    if (confirm('¿Estás seguro de que quieres eliminar este libro?')) {
+        deleteBook(currentBookId);
+        closeBookDetailsModal();
+    }
+});
+
+// Filters
+categoryTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+        categoryTabs.forEach(t => {
+            t.classList.remove('active');
+            t.setAttribute('aria-selected', 'false');
+        });
+        tab.classList.add('active');
+        tab.setAttribute('aria-selected', 'true');
+        filterBooks(tab.dataset.category);
+    });
+});
+
+sortSelect.addEventListener('change', (e) => {
+    sortBooks(e.target.value);
+});
+
+if (languageFilter) {
+    languageFilter.addEventListener('change', (e) => {
+        filterByLanguage(e.target.value);
+    });
+}
+
+if (vocabLanguageFilter) {
+    vocabLanguageFilter.addEventListener('change', (e) => {
+        currentVocabLanguageFilter = e.target.value;
+        renderVocabulary();
+    });
+}
+
+searchInput.addEventListener('input', (e) => {
+    searchBooks(e.target.value);
+});
+
+if (vocabSearchInput) {
+    vocabSearchInput.addEventListener('input', (e) => {
+        renderVocabulary(e.target.value);
+    });
+}
+
+// Modal Outside Clicks
+addBookModal.addEventListener('click', (e) => {
+    if (e.target === addBookModal) {
+        closeAddBookModal();
+    }
+});
+
+bookDetailsModal.addEventListener('click', (e) => {
+    if (e.target === bookDetailsModal) {
+        closeBookDetailsModal();
+    }
+});
+
+addWordModal.addEventListener('click', (e) => {
+    if (e.target === addWordModal) {
+        closeAddWordModalFunc();
+    }
+});
+
+wordDetailsModal.addEventListener('click', (e) => {
+    if (e.target === wordDetailsModal) {
+        closeWordDetailsModalFunc();
+    }
+});
+
+// ============================================
+// Share Functions
+// ============================================
+
+// Share via Email
+function shareViaEmail() {
+    const data = {
+        books: books,
+        vocabulary: vocabulary,
+        exportDate: new Date().toISOString()
+    };
+
+    const dataStr = JSON.stringify(data, null, 2);
+    const blob = new Blob([dataStr], { type: 'application/json' });
+    const fileName = `librismundis_backup_${new Date().toISOString().split('T')[0]}.json`;
+
+    // Check if Web Share API is available
+    if (navigator.share && navigator.canShare) {
+        const file = new File([blob], fileName, { type: 'application/json' });
+
+        if (navigator.canShare({ files: [file] })) {
+            navigator.share({
+                title: 'Copia de seguridad de LIBRISMUNDIS',
+                text: `📧 Backup de LIBRISMUNDIS\n\nLibros: ${books.length}\nPalabras: ${vocabulary.length}\n\nFecha: ${new Date().toLocaleDateString()}`,
+                files: [file]
+            })
+                .then(() => console.log('Compartido exitosamente'))
+                .catch((error) => {
+                    console.log('Error al compartir:', error);
+                    downloadBackupFile(blob, fileName);
+                });
+        } else {
+            alert('Tu navegador no soporta compartir archivos. Se descargará el archivo.');
+            downloadBackupFile(blob, fileName);
+        }
+    } else {
+        // Fallback for desktop
+        downloadBackupFile(blob, fileName);
+        const subject = encodeURIComponent('Copia de seguridad de LIBRISMUNDIS');
+        const body = encodeURIComponent(`Adjunto mi copia de seguridad de LIBRISMUNDIS.\n\n📚 Libros: ${books.length}\n🧠 Palabras: ${vocabulary.length}`);
+        setTimeout(() => {
+            window.location.href = `mailto:?subject=${subject}&body=${body}`;
+        }, 500);
+    }
+}
+
+// Share via WhatsApp
+function shareViaWhatsApp() {
+    const data = {
         books: books,
         vocabulary: vocabulary,
         exportDate: new Date().toISOString()
@@ -518,6 +963,18 @@ function downloadBackupFile(blob, fileName) {
     link.download = fileName;
     link.click();
     URL.revokeObjectURL(url);
+}
+
+// ============================================
+// Initialize Application
+// ============================================
+
+function init() {
+    loadTheme();
+    loadFromLocalStorage();
+    renderBooks();
+    renderStatistics();
+    renderVocabulary();
 }
 
 init();
