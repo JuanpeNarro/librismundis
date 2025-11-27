@@ -895,4 +895,75 @@ function init() {
     renderVocabulary();
 }
 
+
+// ============================================
+// Share Functions
+// ============================================
+
+// Share via Email
+function shareViaEmail() {
+    const data = {
+        books: books,
+        vocabulary: vocabulary,
+        exportDate: new Date().toISOString()
+    };
+
+    const dataStr = JSON.stringify(data, null, 2);
+    const blob = new Blob([dataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+
+    const subject = encodeURIComponent('Copia de seguridad de LIBRISMUNDIS');
+    const body = encodeURIComponent(`Adjunto mi copia de seguridad de LIBRISMUNDIS del ${new Date().toLocaleDateString()}.
+
+📚 Total de libros: ${books.length}
+🧠 Total de palabras: ${vocabulary.length}
+
+Para restaurar los datos, descarga el archivo adjunto y usa la opción "Importar datos" en la aplicación.`);
+
+    // Create a temporary link to download the file
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `librismundis_backup_${new Date().toISOString().split('T')[0]}.json`;
+    link.click();
+
+    // Open email client
+    setTimeout(() => {
+        window.location.href = `mailto:?subject=${subject}&body=${body}`;
+        URL.revokeObjectURL(url);
+    }, 500);
+}
+
+// Share via WhatsApp
+function shareViaWhatsApp() {
+    const data = {
+        books: books,
+        vocabulary: vocabulary,
+        exportDate: new Date().toISOString()
+    };
+
+    const dataStr = JSON.stringify(data, null, 2);
+    const blob = new Blob([dataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+
+    // Create a temporary link to download the file
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `librismundis_backup_${new Date().toISOString().split('T')[0]}.json`;
+    link.click();
+
+    const message = encodeURIComponent(`📚 *Copia de seguridad de LIBRISMUNDIS*
+
+Fecha: ${new Date().toLocaleDateString()}
+📖 Libros: ${books.length}
+🧠 Palabras: ${vocabulary.length}
+
+He descargado el archivo JSON. Para restaurar estos datos, usa la opción "Importar datos" en LIBRISMUNDIS.`);
+
+    // Open WhatsApp
+    setTimeout(() => {
+        window.open(`https://wa.me/?text=${message}`, '_blank');
+        URL.revokeObjectURL(url);
+    }, 500);
+}
+
 init();
