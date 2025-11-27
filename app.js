@@ -910,27 +910,36 @@ function shareViaEmail() {
 
     const dataStr = JSON.stringify(data, null, 2);
     const blob = new Blob([dataStr], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-
-    const subject = encodeURIComponent('Copia de seguridad de LIBRISMUNDIS');
-    const body = encodeURIComponent(`Adjunto mi copia de seguridad de LIBRISMUNDIS del ${new Date().toLocaleDateString()}.
-
-📚 Total de libros: ${books.length}
-🧠 Total de palabras: ${vocabulary.length}
-
-Para restaurar los datos, descarga el archivo adjunto y usa la opción "Importar datos" en la aplicación.`);
-
-    // Create a temporary link to download the file
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `librismundis_backup_${new Date().toISOString().split('T')[0]}.json`;
-    link.click();
-
-    // Open email client
-    setTimeout(() => {
-        window.location.href = `mailto:?subject=${subject}&body=${body}`;
-        URL.revokeObjectURL(url);
-    }, 500);
+    const fileName = `librismundis_backup_${new Date().toISOString().split('T')[0]}.json`;
+    
+    // Check if Web Share API is available
+    if (navigator.share && navigator.canShare) {
+        const file = new File([blob], fileName, { type: 'application/json' });
+        
+        if (navigator.canShare({ files: [file] })) {
+            navigator.share({
+                title: 'Copia de seguridad de LIBRISMUNDIS',
+                text: `📧 Backup de LIBRISMUNDIS\n\nLibros: ${books.length}\nPalabras: ${vocabulary.length}\n\nFecha: ${new Date().toLocaleDateString()}`,
+                files: [file]
+            })
+            .then(() => console.log('Compartido exitosamente'))
+            .catch((error) => {
+                console.log('Error al compartir:', error);
+                downloadBackupFile(blob, fileName);
+            });
+        } else {
+            alert('Tu navegador no soporta compartir archivos. Se descargará el archivo.');
+            downloadBackupFile(blob, fileName);
+        }
+    } else {
+        // Fallback for desktop
+        downloadBackupFile(blob, fileName);
+        const subject = encodeURIComponent('Copia de seguridad de LIBRISMUNDIS');
+        const body = encodeURIComponent(`Adjunto mi copia de seguridad de LIBRISMUNDIS.\n\n📚 Libros: ${books.length}\n🧠 Palabras: ${vocabulary.length}`);
+        setTimeout(() => {
+            window.location.href = `mailto:?subject=${subject}&body=${body}`;
+        }, 500);
+    }
 }
 
 // Share via WhatsApp
@@ -943,27 +952,45 @@ function shareViaWhatsApp() {
 
     const dataStr = JSON.stringify(data, null, 2);
     const blob = new Blob([dataStr], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
+    const fileName = `librismundis_backup_${new Date().toISOString().split('T')[0]}.json`;
+    
+    // Check if Web Share API is available (works on mobile)
+    if (navigator.share && navigator.canShare) {
+        const file = new File([blob], fileName, { type: 'application/json' });
+        
+        if (navigator.canShare({ files: [file] })) {
+            navigator.share({
+                title: 'Copia de seguridad de LIBRISMUNDIS',
+                text: `📚 Backup de LIBRISMUNDIS\n\nLibros: ${books.length}\nPalabras: ${vocabulary.length}\n\nFecha: ${new Date().toLocaleDateString()}`,
+                files: [file]
+            })
+            .then(() => console.log('Compartido exitosamente'))
+            .catch((error) => {
+                console.log('Error al compartir:', error);
+                downloadBackupFile(blob, fileName);
+            });
+        } else {
+            alert('Tu navegador no soporta compartir archivos. Se descargará el archivo.');
+            downloadBackupFile(blob, fileName);
+        }
+    } else {
+        // Fallback for desktop: download + open WhatsApp
+        downloadBackupFile(blob, fileName);
+        const message = encodeURIComponent(`📚 *Copia de seguridad de LIBRISMUNDIS*\n\nFecha: ${new Date().toLocaleDateString()}\n📖 Libros: ${books.length}\n🧠 Palabras: ${vocabulary.length}\n\nHe descargado el archivo JSON. Para restaurar estos datos, usa la opción "Importar datos" en LIBRISMUNDIS.`);
+        setTimeout(() => {
+            window.open(`https://wa.me/?text=${message}`, '_blank');
+        }, 500);
+    }
+}
 
-    // Create a temporary link to download the file
+// Helper function to download backup file
+function downloadBackupFile(blob, fileName) {
+    const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `librismundis_backup_${new Date().toISOString().split('T')[0]}.json`;
+    link.download = fileName;
     link.click();
-
-    const message = encodeURIComponent(`📚 *Copia de seguridad de LIBRISMUNDIS*
-
-Fecha: ${new Date().toLocaleDateString()}
-📖 Libros: ${books.length}
-🧠 Palabras: ${vocabulary.length}
-
-He descargado el archivo JSON. Para restaurar estos datos, usa la opción "Importar datos" en LIBRISMUNDIS.`);
-
-    // Open WhatsApp
-    setTimeout(() => {
-        window.open(`https://wa.me/?text=${message}`, '_blank');
-        URL.revokeObjectURL(url);
-    }, 500);
+    URL.revokeObjectURL(url);
 }
 
 init();
