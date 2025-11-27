@@ -276,441 +276,419 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="bookLanguage" class="form-label">Idioma *</label>
-                    <select id="bookLanguage" class="form-input" required aria-required="true">
-                        <option value="es">🇪🇸 Español</option>
-                        <option value="en">🇬🇧 Inglés</option>
-                        <option value="fr">🇫🇷 Francés</option>
-                        <option value="de">🇩🇪 Alemán</option>
-                        <option value="it">🇮🇹 Italiano</option>
-                        <option value="pt">🇵🇹 Portugués</option>
-                        <option value="other">🌍 Otro</option>
-                    </select>
-                </div>
 
-                <div class="form-row">
-                    <div class="form-group" style="margin: 0;">
-                        <label for="bookCurrentPage" class="form-label">Página Actual (opcional)</label>
-                        <input type="number" id="bookCurrentPage" class="form-input" min="0" placeholder="Ej: 150">
-                    </div>
-                    <div class="form-group" style="margin: 0;">
-                        <label for="bookPercentage" class="form-label">Porcentaje (opcional)</label>
-                        <input type="number" id="bookPercentage" class="form-input" min="0" max="100"
-                            placeholder="Ej: 35">
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">Calificación (opcional)</label>
-                    <div class="star-rating" id="addBookRating">
-                        <span class="star" data-rating="1">⭐</span>
-                        <span class="star" data-rating="2">⭐</span>
-                        <span class="star" data-rating="3">⭐</span>
-                        <span class="star" data-rating="4">⭐</span>
-                        <span class="star" data-rating="5">⭐</span>
-                    </div>
-                    <input type="hidden" id="bookRating" value="0">
-                </div>
-
-                <div class="form-group">
-                    <label for="bookComments" class="form-label">Comentarios (opcional)</label>
-                    <textarea id="bookComments" class="form-textarea"
-                        placeholder="Escribe tus pensamientos sobre el libro..."></textarea>
-                </div>
-
-                <div class="modal-actions">
-                    <button type="button" class="btn btn-secondary" id="cancelAddBook">
-                        Cancelar
-                    </button>
-                    <button type="submit" class="btn btn-primary">
-                        Guardar Libro
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Book Details Modal -->
-    <div id="bookDetailsModal" class="modal" role="dialog" aria-labelledby="detailTitle" aria-modal="true">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title">Detalles del Libro</h2>
-                <button class="modal-close" id="closeDetailsModal" aria-label="Cerrar modal">×</button>
-            </div>
-
-            <div class="book-details-content">
-                <div class="detail-section">
-                    <h3 id="detailTitle" class="detail-section-title" style="font-size: 1.5rem; margin-bottom: 0.5rem;">
-                        Título del Libro</h3>
-                    <p id="detailAuthor" style="color: var(--text-secondary); font-size: 1.1rem;">Autor del Libro</p>
-                    <div style="display: flex; gap: 0.5rem; margin-top: 1rem; flex-wrap: wrap;">
-                        <span id="detailCategory" class="book-category-badge">Categoría</span>
-                        <span id="detailLanguage" class="book-language-badge">Idioma</span>
-                    </div>
-                </div>
-
-                <!-- Progress Section -->
-                <div class="detail-section">
-                    <h3 class="detail-section-title">📊 Progreso de Lectura</h3>
-                    <div class="detail-info">
-                        <div class="detail-item">
-                            <span class="detail-label">Total Páginas:</span>
-                            <span class="detail-value" id="detailTotalPages">0</span>
+                    <div class="book-details-content">
+                        <div class="detail-section">
+                            <h3 id="detailTitle" class="detail-section-title"
+                                style="font-size: 1.5rem; margin-bottom: 0.5rem;">
+                                Título del Libro</h3>
+                            <p id="detailAuthor" style="color: var(--text-secondary); font-size: 1.1rem;">Autor del
+                                Libro</p>
+                            <div style="display: flex; gap: 0.5rem; margin-top: 1rem; flex-wrap: wrap;">
+                                <span id="detailCategory" class="book-category-badge">Categoría</span>
+                                <span id="detailLanguage" class="book-language-badge">Idioma</span>
+                            </div>
                         </div>
-                        <div class="detail-item">
-                            <span class="detail-label">Progreso:</span>
-                            <span class="detail-value" id="detailProgressPercentage">0%</span>
+
+                        <!-- Progress Section -->
+                        <div class="detail-section">
+                            <h3 class="detail-section-title">📊 Progreso de Lectura</h3>
+                            <div class="detail-info">
+                                <div class="detail-item">
+                                    <span class="detail-label">Total Páginas:</span>
+                                    <span class="detail-value" id="detailTotalPages">0</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Progreso:</span>
+                                    <span class="detail-value" id="detailProgressPercentage">0%</span>
+                                </div>
+                            </div>
+
+                            <div class="progress-bar-container" style="margin-top: 1rem;">
+                                <div id="detailProgressBar" class="progress-bar" style="width: 0%"></div>
+                            </div>
+
+                            <div class="progress-edit-controls">
+                                <div class="form-group" style="margin: 0; flex: 1;">
+                                    <label for="detailCurrentPage" class="form-label">Página Actual</label>
+                                    <input type="number" id="detailCurrentPage" class="form-input" min="0"
+                                        placeholder="0">
+                                </div>
+                                <div class="form-group" style="margin: 0; flex: 1;">
+                                    <label for="detailPercentage" class="form-label">Porcentaje</label>
+                                    <input type="number" id="detailPercentage" class="form-input" min="0" max="100"
+                                        placeholder="0">
+
+                                    <!-- Category and Language Edit -->
+                                    <div class="detail-section">
+                                        <h3 class="detail-section-title">🏷️ Categoría e Idioma</h3>
+                                        <div class="form-row">
+                                            <div class="form-group" style="margin: 0;">
+                                                <label for="detailCategorySelect" class="form-label">Categoría</label>
+                                                <select id="detailCategorySelect" class="form-input">
+                                                    <option value="want_to_read">🎯 Quiero leer</option>
+                                                    <option value="reading">📖 Leyendo</option>
+                                                    <option value="completed">✅ Terminado</option>
+                                                    <option value="abandoned">❌ No terminado</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group" style="margin: 0;">
+                                                <label for="detailLanguageSelect" class="form-label">Idioma</label>
+                                                <select id="detailLanguageSelect" class="form-input">
+                                                    <option value="es">🇪🇸 Español</option>
+                                                    <option value="en">🇬🇧 Inglés</option>
+                                                    <option value="fr">🇫🇷 Francés</option>
+                                                    <option value="de">🇩🇪 Alemán</option>
+                                                    <option value="it">🇮🇹 Italiano</option>
+                                                    <option value="pt">🇵🇹 Portugués</option>
+                                                    <option value="other">🌍 Otro</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Action Buttons -->
+                                    <div class="modal-actions">
+                                        <button class="btn btn-danger" id="deleteBookBtn">
+                                            🗑️ Eliminar
+                                        </button>
+                                        <button class="btn btn-primary" id="saveBookBtn">
+                                            💾 Guardar Cambios
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <input type="hidden" id="currentBookId">
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="progress-bar-container" style="margin-top: 1rem;">
-                        <div id="detailProgressBar" class="progress-bar" style="width: 0%"></div>
-                    </div>
+                        <!-- Add Word Modal -->
+                        <div id="addWordModal" class="modal" role="dialog" aria-labelledby="addWordModalTitle"
+                            aria-modal="true">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h2 id="addWordModalTitle" class="modal-title">Agregar Nueva Palabra</h2>
+                                    <button class="modal-close" id="closeAddWordModal"
+                                        aria-label="Cerrar modal">×</button>
+                                </div>
 
-                    <div class="progress-edit-controls">
-                        <div class="form-group" style="margin: 0; flex: 1;">
-                            <label for="detailCurrentPage" class="form-label">Página Actual</label>
-                            <input type="number" id="detailCurrentPage" class="form-input" min="0" placeholder="0">
-                        </div>
-                        <div class="form-group" style="margin: 0; flex: 1;">
-                            <label for="detailPercentage" class="form-label">Porcentaje</label>
-                            <input type="number" id="detailPercentage" class="form-input" min="0" max="100"
-                                placeholder="0">
-                        </div>
-                    </div>
-                </div>
+                                <form id="addWordForm">
+                                    <div class="form-group">
+                                        <label for="wordText" class="form-label">Palabra *</label>
+                                        <input type="text" id="wordText" class="form-input" required
+                                            placeholder="Ej: Serendipity" aria-required="true">
+                                    </div>
 
-                <!-- Rating Section -->
-                <div class="detail-section">
-                    <h3 class="detail-section-title">⭐ Calificación</h3>
-                    <div class="star-rating" id="detailRating">
-                        <span class="star" data-rating="1">⭐</span>
-                        <span class="star" data-rating="2">⭐</span>
-                        <span class="star" data-rating="3">⭐</span>
-                        <span class="star" data-rating="4">⭐</span>
-                        <span class="star" data-rating="5">⭐</span>
-                    </div>
-                </div>
+                                    <div class="form-group">
+                                        <label for="wordLanguage" class="form-label">Idioma *</label>
+                                        <select id="wordLanguage" class="form-input" required aria-required="true">
+                                            <option value="es">🇪🇸 Español</option>
+                                            <option value="en">🇬🇧 Inglés</option>
+                                            <option value="fr">🇫🇷 Francés</option>
+                                            <option value="de">🇩🇪 Alemán</option>
+                                            <option value="it">🇮🇹 Italiano</option>
+                                            <option value="pt">🇵🇹 Portugués</option>
+                                            <option value="other">🌍 Otro</option>
+                                        </select>
+                                    </div>
 
-                <!-- Comments Section -->
-                <div class="detail-section">
-                    <h3 class="detail-section-title">💭 Comentarios</h3>
-                    <textarea id="detailComments" class="form-textarea"
-                        placeholder="Escribe tus pensamientos sobre el libro..."></textarea>
-                </div>
+                                    <div class="form-group">
+                                        <label for="wordDefinition" class="form-label">Definición / Significado
+                                            *</label>
+                                        <textarea id="wordDefinition" class="form-textarea" required
+                                            placeholder="Escribe el significado de la palabra..."></textarea>
+                                    </div>
 
-                <!-- Category and Language Edit -->
-                <div class="detail-section">
-                    <h3 class="detail-section-title">🏷️ Categoría e Idioma</h3>
-                    <div class="form-row">
-                        <div class="form-group" style="margin: 0;">
-                            <label for="detailCategorySelect" class="form-label">Categoría</label>
-                            <select id="detailCategorySelect" class="form-input">
-                                <option value="want_to_read">🎯 Quiero leer</option>
-                                <option value="reading">📖 Leyendo</option>
-                                <option value="completed">✅ Terminado</option>
-                                <option value="abandoned">❌ No terminado</option>
-                            </select>
-                        </div>
-                        <div class="form-group" style="margin: 0;">
-                            <label for="detailLanguageSelect" class="form-label">Idioma</label>
-                            <select id="detailLanguageSelect" class="form-input">
-                                <option value="es">🇪🇸 Español</option>
-                                <option value="en">🇬🇧 Inglés</option>
-                                <option value="fr">🇫🇷 Francés</option>
-                                <option value="de">🇩🇪 Alemán</option>
-                                <option value="it">🇮🇹 Italiano</option>
-                                <option value="pt">🇵🇹 Portugués</option>
-                                <option value="other">🌍 Otro</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
+                                    <div class="form-group">
+                                        <div id="addWordModal" class="modal" role="dialog"
+                                            aria-labelledby="addWordModalTitle" aria-modal="true">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h2 id="addWordModalTitle" class="modal-title">Agregar Nueva Palabra
+                                                    </h2>
+                                                    <button class="modal-close" id="closeAddWordModal"
+                                                        aria-label="Cerrar modal">×</button>
+                                                </div>
 
-                <!-- Action Buttons -->
-                <div class="modal-actions">
-                    <button class="btn btn-danger" id="deleteBookBtn">
-                        🗑️ Eliminar
-                    </button>
-                    <button class="btn btn-primary" id="saveBookBtn">
-                        💾 Guardar Cambios
-                    </button>
-                </div>
-            </div>
+                                                <form id="addWordForm">
+                                                    <div class="form-group">
+                                                        <label for="wordText" class="form-label">Palabra *</label>
+                                                        <input type="text" id="wordText" class="form-input" required
+                                                            placeholder="Ej: Serendipity" aria-required="true">
+                                                    </div>
 
-            <input type="hidden" id="currentBookId">
-        </div>
-    </div>
+                                                    <div class="form-group">
+                                                        <label for="wordLanguage" class="form-label">Idioma *</label>
+                                                        <select id="wordLanguage" class="form-input" required
+                                                            aria-required="true">
+                                                            <option value="es">🇪🇸 Español</option>
+                                                            <option value="en">🇬🇧 Inglés</option>
+                                                            <option value="fr">🇫🇷 Francés</option>
+                                                            <option value="de">🇩🇪 Alemán</option>
+                                                            <option value="it">🇮🇹 Italiano</option>
+                                                            <option value="pt">🇵🇹 Portugués</option>
+                                                            <option value="other">🌍 Otro</option>
+                                                        </select>
+                                                    </div>
 
-    <!-- Add Word Modal -->
-    <div id="addWordModal" class="modal" role="dialog" aria-labelledby="addWordModalTitle" aria-modal="true">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 id="addWordModalTitle" class="modal-title">Agregar Nueva Palabra</h2>
-                <button class="modal-close" id="closeAddWordModal" aria-label="Cerrar modal">×</button>
-            </div>
+                                                    <div class="form-group">
+                                                        <label for="wordDefinition" class="form-label">Definición /
+                                                            Significado
+                                                            *</label>
+                                                        <textarea id="wordDefinition" class="form-textarea" required
+                                                            placeholder="Escribe el significado de la palabra..."></textarea>
+                                                    </div>
 
-            <form id="addWordForm">
-                <div class="form-group">
-                    <label for="wordText" class="form-label">Palabra *</label>
-                    <input type="text" id="wordText" class="form-input" required placeholder="Ej: Serendipity"
-                        aria-required="true">
-                </div>
+                                                    <div class="form-group">
+                                                        <label for="wordContext" class="form-label">Contexto / Frase de
+                                                            ejemplo
+                                                            *</label>
+                                                        <textarea id="wordContext" class="form-textarea" required
+                                                            placeholder="Escribe una frase donde aparezca la palabra..."></textarea>
+                                                    </div>
 
-                <div class="form-group">
-                    <label for="wordLanguage" class="form-label">Idioma *</label>
-                    <select id="wordLanguage" class="form-input" required aria-required="true">
-                        <option value="es">🇪🇸 Español</option>
-                        <option value="en">🇬🇧 Inglés</option>
-                        <option value="fr">🇫🇷 Francés</option>
-                        <option value="de">🇩🇪 Alemán</option>
-                        <option value="it">🇮🇹 Italiano</option>
-                        <option value="pt">🇵🇹 Portugués</option>
-                        <option value="other">🌍 Otro</option>
-                    </select>
-                </div>
+                                                    <div class="modal-actions">
+                                                        <button type="button" class="btn btn-secondary"
+                                                            id="cancelAddWord">
+                                                            Cancelar
+                                                        </button>
+                                                        <button type="submit" class="btn btn-primary">
+                                                            Guardar Palabra
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
 
-                <div class="form-group">
-                    <label for="wordDefinition" class="form-label">Definición / Significado *</label>
-                    <textarea id="wordDefinition" class="form-textarea" required
-                        placeholder="Escribe el significado de la palabra..."></textarea>
-                </div>
+                                        <!-- Word Details Modal -->
+                                        <div id="wordDetailsModal" class="modal" role="dialog"
+                                            aria-labelledby="wordDetailTitle" aria-modal="true">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h2 id="wordDetailTitle" class="modal-title">Detalles de Palabra
+                                                    </h2>
+                                                    <button class="modal-close" id="closeWordDetailsModal"
+                                                        aria-label="Cerrar modal">×</button>
+                                                </div>
 
-                <div class="form-group">
-                    <label for="wordContext" class="form-label">Contexto / Frase de ejemplo *</label>
-                    <textarea id="wordContext" class="form-textarea" required
-                        placeholder="Escribe una frase donde aparezca la palabra..."></textarea>
-                </div>
+                                                <!-- VIEW MODE -->
+                                                <div id="wordViewMode">
+                                                    <div class="detail-section">
+                                                        <h3 id="viewWordText" class="detail-section-title"
+                                                            style="font-size: 1.5rem; margin-bottom: 0.5rem;"></h3>
+                                                        <p id="viewWordLanguage"
+                                                            style="color: var(--text-secondary); font-size: 1.1rem; margin-bottom: 1rem;">
+                                                        </p>
+                                                    </div>
 
-                <div class="modal-actions">
-                    <button type="button" class="btn btn-secondary" id="cancelAddWord">
-                        Cancelar
-                    </button>
-                    <button type="submit" class="btn btn-primary">
-                        Guardar Palabra
-                    </button>
-    </div>
+                                                    <div class="detail-section">
+                                                        <h4 class="detail-label"
+                                                            style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0.5rem;">
+                                                            Definición</h4>
+                                                        <p id="viewWordDefinition" class="detail-value"
+                                                            style="white-space: pre-wrap; line-height: 1.6;"></p>
+                                                    </div>
 
-    <!-- Book Details Modal -->
-    <div id="bookDetailsModal" class="modal" role="dialog" aria-labelledby="detailTitle" aria-modal="true">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title">Detalles del Libro</h2>
-                <button class="modal-close" id="closeDetailsModal" aria-label="Cerrar modal">×</button>
-            </div>
+                                                    <div class="detail-section">
+                                                        <h4 class="detail-label"
+                                                            style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0.5rem;">
+                                                            Contexto / Ejemplo</h4>
+                                                        <p id="viewWordContext" class="detail-value"
+                                                            style="white-space: pre-wrap; font-style: italic; color: var(--text-secondary);">
+                                                        </p>
+                                                    </div>
 
-            <div class="book-details-content">
-                <div class="detail-section">
-                    <h3 id="detailTitle" class="detail-section-title" style="font-size: 1.5rem; margin-bottom: 0.5rem;">
-                        Título del Libro</h3>
-                    <p id="detailAuthor" style="color: var(--text-secondary); font-size: 1.1rem;">Autor del Libro</p>
-                    <div style="display: flex; gap: 0.5rem; margin-top: 1rem; flex-wrap: wrap;">
-                        <span id="detailCategory" class="book-category-badge">Categoría</span>
-                        <span id="detailLanguage" class="book-language-badge">Idioma</span>
-                    </div>
-                </div>
+                                                    <div class="modal-actions">
+                                                        <button type="button" class="btn btn-secondary"
+                                                            id="editWordBtn">
+                                                            ✏️ Editar
+                                                        </button>
+                                                        <button type="button" class="btn btn-primary"
+                                                            id="closeWordViewBtn">
+                                                            Cerrar
+                                                        </button>
+                                                    </div>
+                                                </div>
 
-                <!-- Progress Section -->
-                <div class="detail-section">
-                    <h3 class="detail-section-title">📊 Progreso de Lectura</h3>
-                    <div class="detail-info">
-                        <div class="detail-item">
-                            <span class="detail-label">Total Páginas:</span>
-                            <span class="detail-value" id="detailTotalPages">0</span>
-                        </div>
-                        <div class="detail-item">
-                            <span class="detail-label">Progreso:</span>
-                            <span class="detail-value" id="detailProgressPercentage">0%</span>
-                        </div>
-                    </div>
+                                                <!-- EDIT MODE (Hidden by default) -->
+                                                <form id="editWordForm" class="hidden">
+                                                    <div class="form-group">
+                                                        <label for="detailWordText" class="form-label">Palabra</label>
+                                                        <input type="text" id="detailWordText" class="form-input"
+                                                            required>
+                                                    </div>
 
-                    <div class="progress-bar-container" style="margin-top: 1rem;">
-                        <div id="detailProgressBar" class="progress-bar" style="width: 0%"></div>
-                    </div>
+                                                    <div class="form-group">
+                                                        <label for="detailWordLanguage"
+                                                            class="form-label">Idioma</label>
+                                                        <select id="detailWordLanguage" class="form-input" required>
+                                                            <option value="es">🇪🇸 Español</option>
+                                                            <option value="en">🇬🇧 Inglés</option>
+                                                            <option value="fr">🇫🇷 Francés</option>
+                                                            <option value="de">🇩🇪 Alemán</option>
+                                                            <option value="it">🇮🇹 Italiano</option>
+                                                            <option value="pt">🇵🇹 Portugués</option>
+                                                            <option value="other">🌍 Otro</option>
+                                                        </select>
+                                                    </div>
 
-                    <div class="progress-edit-controls">
-                        <div class="form-group" style="margin: 0; flex: 1;">
-                            <label for="detailCurrentPage" class="form-label">Página Actual</label>
-                            <input type="number" id="detailCurrentPage" class="form-input" min="0" placeholder="0">
-                        </div>
-                        <div class="form-group" style="margin: 0; flex: 1;">
-                            <label for="detailPercentage" class="form-label">Porcentaje</label>
-                            <input type="number" id="detailPercentage" class="form-input" min="0" max="100"
-                                placeholder="0">
-                        </div>
-                    </div>
-                </div>
+                                                    <div class="form-group">
+                                                        <label for="detailWordDefinition" class="form-label">Definición
+                                                            /
+                                                            Significado</label>
+                                                        <textarea id="detailWordDefinition" class="form-textarea"
+                                                            required rows="4"></textarea>
+                                                    </div>
 
-                <!-- Rating Section -->
-                <div class="detail-section">
-                    <h3 class="detail-section-title">⭐ Calificación</h3>
-                    <div class="star-rating" id="detailRating">
-                        <span class="star" data-rating="1">⭐</span>
-                        <span class="star" data-rating="2">⭐</span>
-                        <span class="star" data-rating="3">⭐</span>
-                        <span class="star" data-rating="4">⭐</span>
-                        <span class="star" data-rating="5">⭐</span>
-                    </div>
-                </div>
+                                                    <div class="form-group">
+                                                        <label for="detailWordContext" class="form-label">Contexto /
+                                                            Frase de
+                                                            ejemplo</label>
+                                                        <textarea id="detailWordContext" class="form-textarea" required
+                                                            rows="3"></textarea>
+                                                    </div>
 
-                <!-- Comments Section -->
-                <div class="detail-section">
-                    <h3 class="detail-section-title">💭 Comentarios</h3>
-                    <textarea id="detailComments" class="form-textarea"
-                        placeholder="Escribe tus pensamientos sobre el libro..."></textarea>
-                </div>
+                                                    <div class="modal-actions">
+                                                        <button type="button" class="btn btn-danger" id="deleteWordBtn">
+                                                            🗑️ Eliminar
+                                                        </button>
+                                                        <button type="button" class="btn btn-secondary"
+                                                            id="cancelEditWordBtn">
+                                                            Cancelar
+                                                        </button>
+                                                        <button type="submit" class="btn btn-primary">
+                                                            💾 Guardar Cambios
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
 
-                <!-- Category and Language Edit -->
-                <div class="detail-section">
-                    <h3 class="detail-section-title">🏷️ Categoría e Idioma</h3>
-                    <div class="form-row">
-                        <div class="form-group" style="margin: 0;">
-                            <label for="detailCategorySelect" class="form-label">Categoría</label>
-                            <select id="detailCategorySelect" class="form-input">
-                                <option value="want_to_read">🎯 Quiero leer</option>
-                                <option value="reading">📖 Leyendo</option>
-                                <option value="completed">✅ Terminado</option>
-                                <option value="abandoned">❌ No terminado</option>
-                            </select>
-                        </div>
-                        <div class="form-group" style="margin: 0;">
-                            <label for="detailLanguageSelect" class="form-label">Idioma</label>
-                            <select id="detailLanguageSelect" class="form-input">
-                                <option value="es">🇪🇸 Español</option>
-                                <option value="en">🇬🇧 Inglés</option>
-                                <option value="fr">🇫🇷 Francés</option>
-                                <option value="de">🇩🇪 Alemán</option>
-                                <option value="it">🇮🇹 Italiano</option>
-                                <option value="pt">🇵🇹 Portugués</option>
-                                <option value="other">🌍 Otro</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
+                                        <!-- Book Details Modal -->
+                                        <div id="bookDetailsModal" class="modal" role="dialog"
+                                            aria-labelledby="detailTitle" aria-modal="true">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h2 class="modal-title">Detalles del Libro</h2>
+                                                    <button class="modal-close" id="closeDetailsModal"
+                                                        aria-label="Cerrar modal">×</button>
+                                                </div>
 
-                <!-- Action Buttons -->
-                <div class="modal-actions">
-                    <button class="btn btn-danger" id="deleteBookBtn">
-                        🗑️ Eliminar
-                    </button>
-                    <button class="btn btn-primary" id="saveBookBtn">
-                        💾 Guardar Cambios
-                    </button>
-                </div>
-            </div>
+                                                <div class="book-details-content">
+                                                    <div class="detail-section">
+                                                        <h3 id="detailTitle" class="detail-section-title"
+                                                            style="font-size: 1.5rem; margin-bottom: 0.5rem;">
+                                                            Título del Libro</h3>
+                                                        <p id="detailAuthor"
+                                                            style="color: var(--text-secondary); font-size: 1.1rem;">
+                                                            Autor del
+                                                            Libro</p>
+                                                        <div
+                                                            style="display: flex; gap: 0.5rem; margin-top: 1rem; flex-wrap: wrap;">
+                                                            <span id="detailCategory"
+                                                                class="book-category-badge">Categoría</span>
+                                                            <span id="detailLanguage"
+                                                                class="book-language-badge">Idioma</span>
+                                                        </div>
+                                                    </div>
 
-            <input type="hidden" id="currentBookId">
-        </div>
-    </div>
+                                                    <!-- Progress Section -->
+                                                    <div class="detail-section">
+                                                        <h3 class="detail-section-title">📊 Progreso de Lectura</h3>
+                                                        <div class="detail-info">
+                                                            <div class="detail-item">
+                                                                <span class="detail-label">Total Páginas:</span>
+                                                                <span class="detail-value"
+                                                                    id="detailTotalPages">0</span>
+                                                            </div>
+                                                            <div class="detail-item">
+                                                                <span class="detail-label">Progreso:</span>
+                                                                <span class="detail-value"
+                                                                    id="detailProgressPercentage">0%</span>
+                                                            </div>
+                                                        </div>
 
-    <!-- Add Word Modal -->
-    <div id="addWordModal" class="modal" role="dialog" aria-labelledby="addWordModalTitle" aria-modal="true">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 id="addWordModalTitle" class="modal-title">Agregar Nueva Palabra</h2>
-                <button class="modal-close" id="closeAddWordModal" aria-label="Cerrar modal">×</button>
-            </div>
+                                                        <div class="progress-bar-container" style="margin-top: 1rem;">
+                                                            <div id="detailProgressBar" class="progress-bar"
+                                                                style="width: 0%">
+                                                            </div>
+                                                        </div>
 
-            <form id="addWordForm">
-                <div class="form-group">
-                    <label for="wordText" class="form-label">Palabra *</label>
-                    <input type="text" id="wordText" class="form-input" required placeholder="Ej: Serendipity"
-                        aria-required="true">
-                </div>
+                                                        <div class="progress-edit-controls">
+                                                            <div class="form-group" style="margin: 0; flex: 1;">
+                                                                <label for="detailCurrentPage" class="form-label">Página
+                                                                    Actual</label>
+                                                                <input type="number" id="detailCurrentPage"
+                                                                    class="form-input" min="0" placeholder="0">
+                                                            </div>
+                                                            <div class="form-group" style="margin: 0; flex: 1;">
+                                                                <label for="detailPercentage"
+                                                                    class="form-label">Porcentaje</label>
+                                                                <input type="number" id="detailPercentage"
+                                                                    class="form-input" min="0" max="100"
+                                                                    placeholder="0">
+                                                                <div class="detail-section">
+                                                                    <h3 class="detail-section-title">💭 Comentarios</h3>
+                                                                    <textarea id="detailComments" class="form-textarea"
+                                                                        placeholder="Escribe tus pensamientos sobre el libro..."></textarea>
+                                                                </div>
 
-                <div class="form-group">
-                    <label for="wordLanguage" class="form-label">Idioma *</label>
-                    <select id="wordLanguage" class="form-input" required aria-required="true">
-                        <option value="es">🇪🇸 Español</option>
-                        <option value="en">🇬🇧 Inglés</option>
-                        <option value="fr">🇫🇷 Francés</option>
-                        <option value="de">🇩🇪 Alemán</option>
-                        <option value="it">🇮🇹 Italiano</option>
-                        <option value="pt">🇵🇹 Portugués</option>
-                        <option value="other">🌍 Otro</option>
-                    </select>
-                </div>
+                                                                <!-- Category and Language Edit -->
+                                                                <div class="detail-section">
+                                                                    <h3 class="detail-section-title">🏷️ Categoría e
+                                                                        Idioma</h3>
+                                                                    <div class="form-row">
+                                                                        <div class="form-group" style="margin: 0;">
+                                                                            <label for="detailCategorySelect"
+                                                                                class="form-label">Categoría</label>
+                                                                            <select id="detailCategorySelect"
+                                                                                class="form-input">
+                                                                                <option value="want_to_read">🎯 Quiero
+                                                                                    leer</option>
+                                                                                <option value="reading">📖 Leyendo
+                                                                                </option>
+                                                                                <option value="completed">✅ Terminado
+                                                                                </option>
+                                                                                <option value="abandoned">❌ No terminado
+                                                                                </option>
+                                                                            </select>
+                                                                        </div>
+                                                                        <div class="form-group" style="margin: 0;">
+                                                                            <label for="detailLanguageSelect"
+                                                                                class="form-label">Idioma</label>
+                                                                            <select id="detailLanguageSelect"
+                                                                                class="form-input">
+                                                                                <option value="es">🇪🇸 Español</option>
+                                                                                <option value="en">🇬🇧 Inglés</option>
+                                                                                <option value="fr">🇫🇷 Francés</option>
+                                                                                <option value="de">🇩🇪 Alemán</option>
+                                                                                <option value="it">🇮🇹 Italiano
+                                                                                </option>
+                                                                                <option value="pt">🇵🇹 Portugués
+                                                                                </option>
+                                                                                <option value="other">🌍 Otro</option>
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
 
-                <div class="form-group">
-                    <label for="wordDefinition" class="form-label">Definición / Significado *</label>
-                    <textarea id="wordDefinition" class="form-textarea" required
-                        placeholder="Escribe el significado de la palabra..."></textarea>
-                </div>
+                                                                <!-- Action Buttons -->
+                                                                <div class="modal-actions">
+                                                                    <button class="btn btn-danger" id="deleteBookBtn">
+                                                                        🗑️ Eliminar
+                                                                    </button>
+                                                                    <button class="btn btn-primary" id="saveBookBtn">
+                                                                        💾 Guardar Cambios
+                                                                    </button>
+                                                                </div>
+                                                            </div>
 
-                <div class="form-group">
-                    <label for="wordContext" class="form-label">Contexto / Frase de ejemplo *</label>
-                    <textarea id="wordContext" class="form-textarea" required
-                        placeholder="Escribe una frase donde aparezca la palabra..."></textarea>
-                </div>
+                                                            <input type="hidden" id="currentBookId">
+                                                        </div>
+                                                    </div>
 
-                <div class="modal-actions">
-                    <button type="button" class="btn btn-secondary" id="cancelAddWord">
-                        Cancelar
-                    </button>
-                    <button type="submit" class="btn btn-primary">
-                        Guardar Palabra
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Word Details Modal -->
-    <div id="wordDetailsModal" class="modal" role="dialog" aria-labelledby="detailWordTitle" aria-modal="true">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title">Editar Palabra</h2>
-                <button class="modal-close" id="closeWordDetailsModal" aria-label="Cerrar modal">×</button>
-            </div>
-
-            <form id="editWordForm">
-                <div class="form-group">
-                    <label for="detailWordText" class="form-label">Palabra</label>
-                    <input type="text" id="detailWordText" class="form-input" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="detailWordLanguage" class="form-label">Idioma</label>
-                    <select id="detailWordLanguage" class="form-input" required>
-                        <option value="es">🇪🇸 Español</option>
-                        <option value="en">🇬🇧 Inglés</option>
-                        <option value="fr">🇫🇷 Francés</option>
-                        <option value="de">🇩🇪 Alemán</option>
-                        <option value="it">🇮🇹 Italiano</option>
-                        <option value="pt">🇵🇹 Portugués</option>
-                        <option value="other">🌍 Otro</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="detailWordDefinition" class="form-label">Definición / Significado</label>
-                    <textarea id="detailWordDefinition" class="form-textarea" required rows="4"></textarea>
-                </div>
-
-                <div class="form-group">
-                    <label for="detailWordContext" class="form-label">Contexto / Frase de ejemplo</label>
-                    <textarea id="detailWordContext" class="form-textarea" required rows="3"></textarea>
-                </div>
-
-                <div class="modal-actions">
-                    <button type="button" class="btn btn-danger" id="deleteWordBtn">
-                        🗑️ Eliminar
-                    </button>
-                    <button type="submit" class="btn btn-primary">
-                        💾 Guardar Cambios
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Footer -->
-    <footer class="app-footer">
-        <p>2025. Libris Mundis es una app creada por Juan Pedro Navarro.</p>
-    </footer>
-
-    <!-- JavaScript -->
-    <script src="app.js"></script>
+                                                    <!-- JavaScript -->
+                                                    <script src="app.js"></script>
 </body>
 
 </html>
