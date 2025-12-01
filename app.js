@@ -568,9 +568,9 @@ function openBookDetails(bookId) {
 
     currentBookId = bookId;
 
-    document.getElementById('detailTitle').textContent = book.title;
-    document.getElementById('detailAuthor').textContent = `por ${book.author}`;
-    document.getElementById('detailCategory').textContent = getCategoryLabel(book.category);
+    document.getElementById('detailTitle').value = book.title;
+    document.getElementById('detailAuthor').value = book.author;
+    document.getElementById('detailCategory').value = getCategoryLabel(book.category);
 
     // Language display
     const langCode = book.language || 'es';
@@ -734,15 +734,17 @@ deleteWordBtn.addEventListener('click', () => {
 document.getElementById('saveBookBtn').addEventListener('click', () => {
     if (!currentBookId) return;
 
+    const title = document.getElementById('detailTitle').value;
+    const author = document.getElementById('detailAuthor').value;
     const currentPage = parseInt(document.getElementById('detailCurrentPage').value) || 0;
-    const percentage = parseInt(document.getElementById('detailPercentage').value) || 0;
+    const totalPages = parseInt(document.getElementById('detailTotalPages').value) || 0;
     const comments = document.getElementById('detailComments').value;
     const category = document.getElementById('detailCategorySelect').value;
     const language = document.getElementById('detailLanguageSelect').value;
     const rating = parseFloat(document.getElementById('detailRating').value) || 0;
 
     const book = getBook(currentBookId);
-    let updates = { comments, category, language, rating };
+    let updates = { title, author, comments, category, language, rating };
 
     if (currentPage !== book.currentPage) {
         updates.currentPage = currentPage;
