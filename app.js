@@ -11,7 +11,7 @@ let currentVocabLanguageFilter = 'all';
 let currentSort = 'date_desc';
 let currentBookId = null;
 let currentWordId = null;
-let addBookRatingValue = 0;
+
 let currentView = 'library'; // 'library' | 'vocabulary'
 
 // DOM Elements
@@ -194,7 +194,7 @@ function createBook(title, author, totalPages, category, language = 'es', curren
         currentPage: parseInt(currentPage) || 0,
         category: category,
         language: language,
-        rating: parseInt(rating) || 0,
+        rating: parseFloat(rating) || 0,
         comments: comments.trim(),
         dateAdded: Date.now()
     };
@@ -522,8 +522,8 @@ function renderBooks(searchQuery = '') {
                 </div>
                 
                 ${book.rating > 0 ? `
-                    <div style="margin-top: 0.5rem; color: #ffd700; font-weight: bold;">
-                        ⭐ ${book.rating}/10
+                    <div style="margin-top: 0.5rem; font-size: 0.9rem; color: var(--text-secondary);">
+                        Puntuación: <strong style="color: var(--text-primary);">${book.rating}</strong>
                     </div>
                 ` : ''}
             </div>
@@ -541,6 +541,8 @@ function getCategoryLabel(category) {
     return labels[category] || category;
 }
 
+
+
 function escapeHtml(text) {
     const div = document.createElement('div');
     div.textContent = text;
@@ -554,7 +556,6 @@ function escapeHtml(text) {
 function openAddBookModal() {
     addBookModal.classList.add('active');
     addBookForm.reset();
-    document.getElementById('bookRating').value = 0;
 }
 
 function closeAddBookModal() {
@@ -583,7 +584,8 @@ function openBookDetails(bookId) {
     document.getElementById('detailComments').value = book.comments;
     document.getElementById('detailCategorySelect').value = book.category;
     document.getElementById('detailLanguageSelect').value = langCode;
-    document.getElementById('detailRatingInput').value = book.rating || 0;
+
+    document.getElementById('detailRating').value = book.rating || '';
 
     bookDetailsModal.classList.add('active');
 }
@@ -608,21 +610,10 @@ function openWordDetails(wordId) {
 
     currentWordId = wordId;
 
-    // Populate View Mode
-    document.getElementById('viewWordText').textContent = word.word;
-    document.getElementById('viewWordLanguage').textContent = `${getLanguageFlag(word.language)} ${getLanguageName(word.language)}`;
-    document.getElementById('viewWordDefinition').textContent = word.definition;
-    document.getElementById('viewWordContext').textContent = `"${word.context}"`;
-
-    // Populate Edit Mode (Form)
     document.getElementById('detailWordText').value = word.word;
     document.getElementById('detailWordLanguage').value = word.language;
     document.getElementById('detailWordDefinition').value = word.definition;
     document.getElementById('detailWordContext').value = word.context;
-
-    // Show View Mode, Hide Edit Mode
-    document.getElementById('wordViewMode').classList.remove('hidden');
-    document.getElementById('editWordForm').classList.add('hidden');
 
     wordDetailsModal.classList.add('active');
 }
@@ -630,12 +621,11 @@ function openWordDetails(wordId) {
 function closeWordDetailsModalFunc() {
     wordDetailsModal.classList.remove('active');
     currentWordId = null;
-    // Reset to view mode for next time
-    setTimeout(() => {
-        if (document.getElementById('wordViewMode')) document.getElementById('wordViewMode').classList.remove('hidden');
-        if (document.getElementById('editWordForm')) document.getElementById('editWordForm').classList.add('hidden');
-    }, 300);
 }
+
+// ============================================
+// Rating Management (Removed - now using numeric input)
+// ============================================
 
 // ============================================
 // Event Handlers
@@ -675,28 +665,6 @@ closeAddWordModal.addEventListener('click', closeAddWordModalFunc);
 cancelAddWord.addEventListener('click', closeAddWordModalFunc);
 closeWordDetailsModal.addEventListener('click', closeWordDetailsModalFunc);
 
-// Vocabulary View/Edit Toggle Events
-const editWordBtn = document.getElementById('editWordBtn');
-if (editWordBtn) {
-    editWordBtn.addEventListener('click', () => {
-        document.getElementById('wordViewMode').classList.add('hidden');
-        document.getElementById('editWordForm').classList.remove('hidden');
-    });
-}
-
-const cancelEditWordBtn = document.getElementById('cancelEditWordBtn');
-if (cancelEditWordBtn) {
-    cancelEditWordBtn.addEventListener('click', () => {
-        document.getElementById('editWordForm').classList.add('hidden');
-        document.getElementById('wordViewMode').classList.remove('hidden');
-    });
-}
-
-const closeWordViewBtn = document.getElementById('closeWordViewBtn');
-if (closeWordViewBtn) {
-    closeWordViewBtn.addEventListener('click', closeWordDetailsModalFunc);
-}
-
 // Theme toggle
 if (themeToggle) {
     themeToggle.addEventListener('click', toggleTheme);
@@ -712,7 +680,7 @@ addBookForm.addEventListener('submit', (e) => {
     const category = document.getElementById('bookCategory').value;
     const language = document.getElementById('bookLanguage').value;
     const currentPage = document.getElementById('bookCurrentPage').value || 0;
-    const rating = parseInt(document.getElementById('bookRating').value) || 0;
+    const rating = parseFloat(document.getElementById('bookRating').value) || 0;
     const comments = document.getElementById('bookComments').value;
 
     const book = createBook(title, author, totalPages, category, language, currentPage, rating, comments);
@@ -751,15 +719,7 @@ editWordForm.addEventListener('submit', (e) => {
         context: context.trim()
     });
 
-    // Update View Mode with new values
-    document.getElementById('viewWordText').textContent = word;
-    document.getElementById('viewWordLanguage').textContent = `${getLanguageFlag(language)} ${getLanguageName(language)}`;
-    document.getElementById('viewWordDefinition').textContent = definition;
-    document.getElementById('viewWordContext').textContent = `"${context}"`;
-
-    // Switch back to View Mode
-    document.getElementById('editWordForm').classList.add('hidden');
-    document.getElementById('wordViewMode').classList.remove('hidden');
+    closeWordDetailsModalFunc();
 });
 
 deleteWordBtn.addEventListener('click', () => {
@@ -779,7 +739,7 @@ document.getElementById('saveBookBtn').addEventListener('click', () => {
     const comments = document.getElementById('detailComments').value;
     const category = document.getElementById('detailCategorySelect').value;
     const language = document.getElementById('detailLanguageSelect').value;
-    const rating = parseInt(document.getElementById('detailRatingInput').value) || 0;
+    const rating = parseFloat(document.getElementById('detailRating').value) || 0;
 
     const book = getBook(currentBookId);
     let updates = { comments, category, language, rating };
@@ -843,6 +803,8 @@ if (vocabSearchInput) {
     });
 }
 
+// Ratings (removed - now using numeric input)
+
 // Modal Outside Clicks
 addBookModal.addEventListener('click', (e) => {
     if (e.target === addBookModal) {
@@ -869,100 +831,127 @@ wordDetailsModal.addEventListener('click', (e) => {
 });
 
 // ============================================
-// Share Functions
+// Goodreads CSV Import
 // ============================================
 
-// Share via Email
-function shareViaEmail() {
-    const data = {
-        books: books,
-        vocabulary: vocabulary,
-        exportDate: new Date().toISOString()
-    };
-
-    const dataStr = JSON.stringify(data, null, 2);
-    const blob = new Blob([dataStr], { type: 'application/json' });
-    const fileName = `librismundis_backup_${new Date().toISOString().split('T')[0]}.json`;
-
-    // Check if Web Share API is available
-    if (navigator.share && navigator.canShare) {
-        const file = new File([blob], fileName, { type: 'application/json' });
-
-        if (navigator.canShare({ files: [file] })) {
-            navigator.share({
-                title: 'Copia de seguridad de LIBRISMUNDIS',
-                text: `📧 Backup de LIBRISMUNDIS\n\nLibros: ${books.length}\nPalabras: ${vocabulary.length}\n\nFecha: ${new Date().toLocaleDateString()}`,
-                files: [file]
-            })
-                .then(() => console.log('Compartido exitosamente'))
-                .catch((error) => {
-                    console.log('Error al compartir:', error);
-                    downloadBackupFile(blob, fileName);
-                });
-        } else {
-            alert('Tu navegador no soporta compartir archivos. Se descargará el archivo.');
-            downloadBackupFile(blob, fileName);
-        }
-    } else {
-        // Fallback for desktop
-        downloadBackupFile(blob, fileName);
-        const subject = encodeURIComponent('Copia de seguridad de LIBRISMUNDIS');
-        const body = encodeURIComponent(`Adjunto mi copia de seguridad de LIBRISMUNDIS.\n\n📚 Libros: ${books.length}\n🧠 Palabras: ${vocabulary.length}`);
-        setTimeout(() => {
-            window.location.href = `mailto:?subject=${subject}&body=${body}`;
-        }, 500);
+function parseGoodreadsCSV(csvText) {
+    const lines = csvText.split('\n');
+    if (lines.length < 2) {
+        alert('El archivo CSV está vacío o no tiene el formato correcto.');
+        return [];
     }
+
+    // Parse header
+    const header = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g, ''));
+
+    // Find column indices
+    const titleIdx = header.findIndex(h => h.toLowerCase() === 'title');
+    const authorIdx = header.findIndex(h => h.toLowerCase() === 'author');
+    const pagesIdx = header.findIndex(h => h.toLowerCase() === 'number of pages');
+    const ratingIdx = header.findIndex(h => h.toLowerCase() === 'my rating');
+    const shelfIdx = header.findIndex(h => h.toLowerCase() === 'exclusive shelf');
+
+    if (titleIdx === -1 || authorIdx === -1) {
+        alert('El archivo CSV no tiene las columnas requeridas (Title, Author).');
+        return [];
+    }
+
+    const books = [];
+
+    // Parse each line
+    for (let i = 1; i < lines.length; i++) {
+        const line = lines[i].trim();
+        if (!line) continue;
+
+        // Simple CSV parsing (handles quotes)
+        const values = [];
+        let current = '';
+        let inQuotes = false;
+
+        for (let j = 0; j < line.length; j++) {
+            const char = line[j];
+            if (char === '"') {
+                inQuotes = !inQuotes;
+            } else if (char === ',' && !inQuotes) {
+                values.push(current.trim());
+                current = '';
+            } else {
+                current += char;
+            }
+        }
+        values.push(current.trim());
+
+        const title = values[titleIdx] || '';
+        const author = values[authorIdx] || '';
+
+        if (!title || !author) continue;
+
+        // Map Goodreads shelf to our category
+        const shelf = (values[shelfIdx] || '').toLowerCase();
+        let category = 'want_to_read';
+        if (shelf === 'read') {
+            category = 'completed';
+        } else if (shelf === 'currently-reading') {
+            category = 'reading';
+        }
+
+        const pages = parseInt(values[pagesIdx]) || 0;
+        const rating = parseInt(values[ratingIdx]) || 0;
+
+        // Convert Goodreads 5-star rating to our 10-point scale
+        const convertedRating = rating > 0 ? rating * 2 : 0;
+
+        books.push({
+            title: title.replace(/^"|"$/g, ''),
+            author: author.replace(/^"|"$/g, ''),
+            totalPages: pages,
+            category: category,
+            rating: convertedRating,
+            language: 'en', // Default to English for Goodreads imports
+            currentPage: category === 'completed' ? pages : 0
+        });
+    }
+
+    return books;
 }
 
-// Share via WhatsApp
-function shareViaWhatsApp() {
-    const data = {
-        books: books,
-        vocabulary: vocabulary,
-        exportDate: new Date().toISOString()
+function importFromGoodreads(file) {
+    const reader = new FileReader();
+
+    reader.onload = function (e) {
+        const csvText = e.target.result;
+        const parsedBooks = parseGoodreadsCSV(csvText);
+
+        if (parsedBooks.length === 0) {
+            alert('No se pudieron importar libros del archivo CSV.');
+            return;
+        }
+
+        // Add all books
+        let addedCount = 0;
+        parsedBooks.forEach(bookData => {
+            const book = createBook(
+                bookData.title,
+                bookData.author,
+                bookData.totalPages,
+                bookData.category,
+                bookData.language,
+                bookData.currentPage,
+                bookData.rating,
+                ''
+            );
+            addBook(book);
+            addedCount++;
+        });
+
+        alert(`Se importaron ${addedCount} libros de Goodreads exitosamente.`);
     };
 
-    const dataStr = JSON.stringify(data, null, 2);
-    const blob = new Blob([dataStr], { type: 'application/json' });
-    const fileName = `librismundis_backup_${new Date().toISOString().split('T')[0]}.json`;
+    reader.onerror = function () {
+        alert('Error al leer el archivo CSV.');
+    };
 
-    // Check if Web Share API is available (works on mobile)
-    if (navigator.share && navigator.canShare) {
-        const file = new File([blob], fileName, { type: 'application/json' });
-
-        if (navigator.canShare({ files: [file] })) {
-            navigator.share({
-                title: 'Copia de seguridad de LIBRISMUNDIS',
-                text: `📚 Backup de LIBRISMUNDIS\n\nLibros: ${books.length}\nPalabras: ${vocabulary.length}\n\nFecha: ${new Date().toLocaleDateString()}`,
-                files: [file]
-            })
-                .then(() => console.log('Compartido exitosamente'))
-                .catch((error) => {
-                    console.log('Error al compartir:', error);
-                    downloadBackupFile(blob, fileName);
-                });
-        } else {
-            alert('Tu navegador no soporta compartir archivos. Se descargará el archivo.');
-            downloadBackupFile(blob, fileName);
-        }
-    } else {
-        // Fallback for desktop: download + open WhatsApp
-        downloadBackupFile(blob, fileName);
-        const message = encodeURIComponent(`📚 *Copia de seguridad de LIBRISMUNDIS*\n\nFecha: ${new Date().toLocaleDateString()}\n📖 Libros: ${books.length}\n🧠 Palabras: ${vocabulary.length}\n\nHe descargado el archivo JSON. Para restaurar estos datos, usa la opción "Importar datos" en LIBRISMUNDIS.`);
-        setTimeout(() => {
-            window.open(`https://wa.me/?text=${message}`, '_blank');
-        }, 500);
-    }
-}
-
-// Helper function to download backup file
-function downloadBackupFile(blob, fileName) {
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = fileName;
-    link.click();
-    URL.revokeObjectURL(url);
+    reader.readAsText(file);
 }
 
 // ============================================
@@ -975,6 +964,24 @@ function init() {
     renderBooks();
     renderStatistics();
     renderVocabulary();
+
+    // Goodreads import event listeners
+    const importGoodreadsBtn = document.getElementById('importGoodreadsBtn');
+    const goodreadsFileInput = document.getElementById('goodreadsFileInput');
+
+    if (importGoodreadsBtn && goodreadsFileInput) {
+        importGoodreadsBtn.addEventListener('click', () => {
+            goodreadsFileInput.click();
+        });
+
+        goodreadsFileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                importFromGoodreads(file);
+                e.target.value = ''; // Reset file input
+            }
+        });
+    }
 }
 
 init();
