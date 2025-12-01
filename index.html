@@ -8,6 +8,8 @@
         content="LIBRISMUNDIS - Gestor de libros profesional con seguimiento de progreso, calificaciones y comentarios">
     <title>LIBRISMUNDIS - Gestor de Libros</title>
     <link rel="stylesheet" href="index.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0f172a">
 </head>
 
 <body>
@@ -317,9 +319,11 @@
 
             <div class="book-details-content">
                 <div class="detail-section">
-                    <h3 id="detailTitle" class="detail-section-title" style="font-size: 1.5rem; margin-bottom: 0.5rem;">
-                        Título del Libro</h3>
-                    <p id="detailAuthor" style="color: var(--text-secondary); font-size: 1.1rem;">Autor del Libro</p>
+                    <input type="text" id="detailTitle" class="form-input"
+                        style="font-size: 1.3rem; font-weight: 600; margin-bottom: 0.5rem;"
+                        placeholder="Título del libro">
+                    <input type="text" id="detailAuthor" class="form-input"
+                        style="font-size: 1rem; color: var(--text-secondary);" placeholder="Autor del libro">
                     <div style="display: flex; gap: 0.5rem; margin-top: 1rem; flex-wrap: wrap;">
                         <span id="detailCategory" class="book-category-badge">Categoría</span>
                         <span id="detailLanguage" class="book-language-badge">Idioma</span>
@@ -517,6 +521,19 @@
 
     <!-- JavaScript -->
     <script src="app.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(registration => {
+                        console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                    })
+                    .catch(err => {
+                        console.log('ServiceWorker registration failed: ', err);
+                    });
+            });
+        }
+    </script>
 </body>
 
 </html>
