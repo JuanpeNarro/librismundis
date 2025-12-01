@@ -8,31 +8,13 @@
         content="LIBRISMUNDIS - Gestor de libros profesional con seguimiento de progreso, calificaciones y comentarios">
     <title>LIBRISMUNDIS - Gestor de Libros</title>
     <link rel="stylesheet" href="index.css">
-    <link rel="manifest" href="manifest.json">
-    <link rel="icon" href="icon.svg" type="image/svg+xml">
-    <meta name="theme-color" content="#0f172a">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js')
-                    .then(registration => {
-                        console.log('ServiceWorker registration successful');
-                    })
-                    .catch(err => {
-                        console.log('ServiceWorker registration failed: ', err);
-                    });
-            });
-        }
-    </script>
 </head>
 
 <body>
     <!-- Header -->
     <header class="header">
         <div class="header-content">
-            <h1 class="logo" id="logo">LIBRISMUNDIS</h1>
+            <h1 class="logo" id="logo">LIBRISMUNDIS por Juanpe Narro</h1>
 
             <div class="search-container">
                 <span class="search-icon">🔍</span>
@@ -167,12 +149,10 @@
                         </button>
                         <input type="file" id="importFile" accept=".json" style="display: none;"
                             onchange="importData(this)">
-                        <button class="btn btn-secondary" id="shareEmailBtn" onclick="shareViaEmail()">
-                            📧 Enviar por Email
+                        <button class="btn btn-secondary" id="importGoodreadsBtn">
+                            📥 Importar de Goodreads
                         </button>
-                        <button class="btn btn-secondary" id="shareWhatsAppBtn" onclick="shareViaWhatsApp()">
-                            💬 Enviar por WhatsApp
-                        </button>
+                        <input type="file" id="goodreadsFileInput" accept=".csv" style="display: none;">
                     </div>
                 </div>
             </section>
@@ -276,8 +256,8 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="bookLanguage" class="form-label">Idioma</label>
-                    <select id="bookLanguage" class="form-input">
+                    <label for="bookLanguage" class="form-label">Idioma *</label>
+                    <select id="bookLanguage" class="form-input" required aria-required="true">
                         <option value="es">🇪🇸 Español</option>
                         <option value="en">🇬🇧 Inglés</option>
                         <option value="fr">🇫🇷 Francés</option>
@@ -288,16 +268,28 @@
                     </select>
                 </div>
 
-                <div class="form-group">
-                    <label for="bookRating" class="form-label">Calificación (0-10)</label>
-                    <input type="number" id="bookRating" class="form-input" min="0" max="10" placeholder="Ej: 8"
-                        value="0">
+                <div class="form-row">
+                    <div class="form-group" style="margin: 0;">
+                        <label for="bookCurrentPage" class="form-label">Página Actual (opcional)</label>
+                        <input type="number" id="bookCurrentPage" class="form-input" min="0" placeholder="Ej: 150">
+                    </div>
+                    <div class="form-group" style="margin: 0;">
+                        <label for="bookPercentage" class="form-label">Porcentaje (opcional)</label>
+                        <input type="number" id="bookPercentage" class="form-input" min="0" max="100"
+                            placeholder="Ej: 35">
+                    </div>
                 </div>
 
                 <div class="form-group">
-                    <label for="bookComments" class="form-label">Comentarios</label>
+                    <label for="bookRating" class="form-label">Calificación (opcional, 1-10)</label>
+                    <input type="number" id="bookRating" class="form-input" min="1" max="10" step="0.1"
+                        placeholder="Ej: 8.5">
+                </div>
+
+                <div class="form-group">
+                    <label for="bookComments" class="form-label">Comentarios (opcional)</label>
                     <textarea id="bookComments" class="form-textarea"
-                        placeholder="Escribe tus expectativas o notas iniciales..."></textarea>
+                        placeholder="Escribe tus pensamientos sobre el libro..."></textarea>
                 </div>
 
                 <div class="modal-actions">
@@ -324,8 +316,7 @@
                 <div class="detail-section">
                     <h3 id="detailTitle" class="detail-section-title" style="font-size: 1.5rem; margin-bottom: 0.5rem;">
                         Título del Libro</h3>
-                    <p id="detailAuthor" style="color: var(--text-secondary); font-size: 1.1rem;">Autor del
-                        Libro</p>
+                    <p id="detailAuthor" style="color: var(--text-secondary); font-size: 1.1rem;">Autor del Libro</p>
                     <div style="display: flex; gap: 0.5rem; margin-top: 1rem; flex-wrap: wrap;">
                         <span id="detailCategory" class="book-category-badge">Categoría</span>
                         <span id="detailLanguage" class="book-language-badge">Idioma</span>
@@ -349,10 +340,8 @@
                     <div class="progress-bar-container" style="margin-top: 1rem;">
                         <div id="detailProgressBar" class="progress-bar" style="width: 0%"></div>
                     </div>
-                </div>
 
-                <div class="progress-edit-controls">
-                    <div class="form-row">
+                    <div class="progress-edit-controls">
                         <div class="form-group" style="margin: 0; flex: 1;">
                             <label for="detailCurrentPage" class="form-label">Página Actual</label>
                             <input type="number" id="detailCurrentPage" class="form-input" min="0" placeholder="0">
@@ -363,61 +352,62 @@
                                 placeholder="0">
                         </div>
                     </div>
+                </div>
 
-                    <div class="detail-section">
-                        <h3 class="detail-section-title">⭐ Calificación</h3>
-                        <div class="form-group">
-                            <label for="detailRatingInput" class="form-label">Puntaje (0-10)</label>
-                            <input type="number" id="detailRatingInput" class="form-input" min="0" max="10"
-                                placeholder="Ej: 8">
+                <!-- Rating Section -->
+                <div class="detail-section">
+                    <h3 class="detail-section-title">⭐ Calificación</h3>
+                    <input type="number" id="detailRating" class="form-input" min="1" max="10" step="0.1"
+                        placeholder="Ej: 8.5">
+                </div>
+
+                <!-- Comments Section -->
+                <div class="detail-section">
+                    <h3 class="detail-section-title">💭 Comentarios</h3>
+                    <textarea id="detailComments" class="form-textarea"
+                        placeholder="Escribe tus pensamientos sobre el libro..."></textarea>
+                </div>
+
+                <!-- Category and Language Edit -->
+                <div class="detail-section">
+                    <h3 class="detail-section-title">🏷️ Categoría e Idioma</h3>
+                    <div class="form-row">
+                        <div class="form-group" style="margin: 0;">
+                            <label for="detailCategorySelect" class="form-label">Categoría</label>
+                            <select id="detailCategorySelect" class="form-input">
+                                <option value="want_to_read">🎯 Quiero leer</option>
+                                <option value="reading">📖 Leyendo</option>
+                                <option value="completed">✅ Terminado</option>
+                                <option value="abandoned">❌ No terminado</option>
+                            </select>
                         </div>
-                    </div>
-
-                    <div class="detail-section">
-                        <h3 class="detail-section-title">💭 Comentarios</h3>
-                        <textarea id="detailComments" class="form-textarea"
-                            placeholder="Escribe tus pensamientos sobre el libro..."></textarea>
-                    </div>
-
-                    <!-- Category and Language Edit -->
-                    <div class="detail-section">
-                        <h3 class="detail-section-title">🏷️ Categoría e Idioma</h3>
-                        <div class="form-row">
-                            <div class="form-group" style="margin: 0;">
-                                <label for="detailCategorySelect" class="form-label">Categoría</label>
-                                <select id="detailCategorySelect" class="form-input">
-                                    <option value="want_to_read">🎯 Quiero leer</option>
-                                    <option value="reading">📖 Leyendo</option>
-                                    <option value="completed">✅ Terminado</option>
-                                    <option value="abandoned">❌ No terminado</option>
-                                </select>
-                            </div>
-                            <div class="form-group" style="margin: 0;">
-                                <label for="detailLanguageSelect" class="form-label">Idioma</label>
-                                <select id="detailLanguageSelect" class="form-input">
-                                    <option value="es">🇪🇸 Español</option>
-                                    <option value="en">🇬🇧 Inglés</option>
-                                    <option value="fr">🇫🇷 Francés</option>
-                                    <option value="de">🇩🇪 Alemán</option>
-                                    <option value="it">🇮🇹 Italiano</option>
-                                    <option value="pt">🇵🇹 Portugués</option>
-                                    <option value="other">🌍 Otro</option>
-                                </select>
-                            </div>
+                        <div class="form-group" style="margin: 0;">
+                            <label for="detailLanguageSelect" class="form-label">Idioma</label>
+                            <select id="detailLanguageSelect" class="form-input">
+                                <option value="es">🇪🇸 Español</option>
+                                <option value="en">🇬🇧 Inglés</option>
+                                <option value="fr">🇫🇷 Francés</option>
+                                <option value="de">🇩🇪 Alemán</option>
+                                <option value="it">🇮🇹 Italiano</option>
+                                <option value="pt">🇵🇹 Portugués</option>
+                                <option value="other">🌍 Otro</option>
+                            </select>
                         </div>
-                    </div>
-
-                    <!-- Action Buttons -->
-                    <div class="modal-actions">
-                        <button class="btn btn-danger" id="deleteBookBtn">
-                            🗑️ Eliminar
-                        </button>
-                        <button class="btn btn-primary" id="saveBookBtn">
-                            💾 Guardar Cambios
-                        </button>
                     </div>
                 </div>
+
+                <!-- Action Buttons -->
+                <div class="modal-actions">
+                    <button class="btn btn-danger" id="deleteBookBtn">
+                        🗑️ Eliminar
+                    </button>
+                    <button class="btn btn-primary" id="saveBookBtn">
+                        💾 Guardar Cambios
+                    </button>
+                </div>
             </div>
+
+            <input type="hidden" id="currentBookId">
         </div>
     </div>
 
@@ -474,52 +464,14 @@
     </div>
 
     <!-- Word Details Modal -->
-    <div id="wordDetailsModal" class="modal" role="dialog" aria-labelledby="wordDetailTitle" aria-modal="true">
+    <div id="wordDetailsModal" class="modal" role="dialog" aria-labelledby="detailWordTitle" aria-modal="true">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 id="wordDetailTitle" class="modal-title">Detalles de Palabra</h2>
+                <h2 class="modal-title">Editar Palabra</h2>
                 <button class="modal-close" id="closeWordDetailsModal" aria-label="Cerrar modal">×</button>
             </div>
 
-            <!-- VIEW MODE -->
-            <div id="wordViewMode">
-                <div class="detail-section">
-                    <h3 id="viewWordText" class="detail-section-title"
-                        style="font-size: 1.5rem; margin-bottom: 0.5rem;"></h3>
-                    <p id="viewWordLanguage"
-                        style="color: var(--text-secondary); font-size: 1.1rem; margin-bottom: 1rem;">
-                    </p>
-                </div>
-
-                <div class="detail-section">
-                    <h4 class="detail-label"
-                        style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0.5rem;">
-                        Definición</h4>
-                    <p id="viewWordDefinition" class="detail-value" style="white-space: pre-wrap; line-height: 1.6;">
-                    </p>
-                </div>
-
-                <div class="detail-section">
-                    <h4 class="detail-label"
-                        style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0.5rem;">
-                        Contexto / Ejemplo</h4>
-                    <p id="viewWordContext" class="detail-value"
-                        style="white-space: pre-wrap; font-style: italic; color: var(--text-secondary);">
-                    </p>
-                </div>
-
-                <div class="modal-actions">
-                    <button type="button" class="btn btn-secondary" id="editWordBtn">
-                        ✏️ Editar
-                    </button>
-                    <button type="button" class="btn btn-primary" id="closeWordViewBtn">
-                        Cerrar
-                    </button>
-                </div>
-            </div>
-
-            <!-- EDIT MODE (Hidden by default) -->
-            <form id="editWordForm" class="hidden">
+            <form id="editWordForm">
                 <div class="form-group">
                     <label for="detailWordText" class="form-label">Palabra</label>
                     <input type="text" id="detailWordText" class="form-input" required>
@@ -552,9 +504,6 @@
                     <button type="button" class="btn btn-danger" id="deleteWordBtn">
                         🗑️ Eliminar
                     </button>
-                    <button type="button" class="btn btn-secondary" id="cancelEditWordBtn">
-                        Cancelar
-                    </button>
                     <button type="submit" class="btn btn-primary">
                         💾 Guardar Cambios
                     </button>
@@ -563,6 +512,7 @@
         </div>
     </div>
 
+    <!-- JavaScript -->
     <script src="app.js"></script>
 </body>
 
