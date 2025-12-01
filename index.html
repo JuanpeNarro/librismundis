@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="es" data-theme="dark">
 
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,6 +11,9 @@
         content="LIBRISMUNDIS - Gestor de libros profesional con seguimiento de progreso, calificaciones y comentarios">
     <title>LIBRISMUNDIS - Gestor de Libros</title>
     <link rel="stylesheet" href="index.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0f172a">
+    <link rel="apple-touch-icon" href="icon.svg">
 </head>
 
 <body>
@@ -517,6 +523,19 @@
 
     <!-- JavaScript -->
     <script src="app.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(registration => {
+                        console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                    })
+                    .catch(err => {
+                        console.log('ServiceWorker registration failed: ', err);
+                    });
+            });
+        }
+    </script>
 </body>
 
 </html>
