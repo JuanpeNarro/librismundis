@@ -1,4 +1,4 @@
-const CACHE_NAME = 'librismundis-v2';
+const CACHE_NAME = 'librismundis-v3';
 const ASSETS_TO_CACHE = [
     './',
     './index.html',
