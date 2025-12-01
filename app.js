@@ -1008,5 +1008,3 @@ function init() {
     renderStatistics();
     renderVocabulary();
 }
-
-document.addEventListener('DOMContentLoaded', init);
