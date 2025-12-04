@@ -27,11 +27,6 @@
 - Filtrado por idioma
 - Búsqueda rápida
 
-### 💬 Chatbot IA (Syl)
-- Asistente de lectura impulsado por Gemini API
-- Discusiones sobre libros y adaptaciones
-- Recomendaciones personalizadas
-
 ### 🔐 Sistema de Autenticación
 - Registro e inicio de sesión
 - Datos de usuario separados
@@ -79,7 +74,6 @@ Luego abre `http://localhost:8000` en tu navegador.
 
 - Navegador moderno (Chrome, Firefox, Safari, Edge)
 - JavaScript habilitado
-- Para el chatbot: API Key de Google Gemini (opcional)
 
 ## 🎨 Tecnologías Utilizadas
 
@@ -88,7 +82,6 @@ Luego abre `http://localhost:8000` en tu navegador.
 - **JavaScript (Vanilla)** - Sin frameworks, código puro
 - **LocalStorage** - Persistencia de datos
 - **Google Books API** - Búsqueda de libros
-- **Gemini API** - Chatbot IA (opcional)
 - **PWA** - Progressive Web App con Service Worker
 
 ## 📱 PWA (Progressive Web App)
@@ -118,12 +111,6 @@ LIBRISMUNDIS funciona como una PWA, lo que significa que puedes:
 3. Selecciona el archivo CSV
 4. Las portadas se buscarán automáticamente
 
-### Configurar Chatbot
-1. Ve a la pestaña del chat
-2. Click en ⚙️ para configurar
-3. Ingresa tu API Key de Gemini
-4. ¡Empieza a chatear sobre libros!
-
 ## 🎨 Personalización
 
 ### Temas
@@ -141,7 +128,7 @@ El diseño se adapta automáticamente a:
 
 - Todos los datos se almacenan localmente en tu navegador
 - No se envía información a servidores externos (excepto API calls opcionales)
-- Tu API Key de Gemini se guarda solo en tu dispositivo
+
 
 ## 🤝 Contribuciones
 
@@ -163,9 +150,9 @@ Este proyecto está bajo la Licencia MIT - ver el archivo LICENSE para más deta
 ## 🙏 Agradecimientos
 
 - Google Books API por la búsqueda de libros
-- Google Gemini por el chatbot IA
 - La comunidad de desarrolladores web
 
 ---
 
 **¿Te gusta LIBRISMUNDIS?** ⭐ Dale una estrella al repositorio!
+
