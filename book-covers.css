@@ -1,0 +1,43 @@
+/* ============================================
+   Book Cover Images
+   ============================================ */
+.book-cover-container {
+    width: 100%;
+    height: 180px;
+    overflow: hidden;
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
+    background: var(--bg-tertiary);
+    margin-bottom: var(--spacing-md);
+}
+
+.book-cover-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transition: transform var(--transition-base);
+}
+
+.book-card:hover .book-cover-image {
+    transform: scale(1.05);
+}
+
+/* Ajustar el book-card para que la portada quede bien */
+.book-card {
+    padding: 0 !important;
+    overflow: hidden;
+}
+
+.book-card .book-header,
+.book-card .book-progress,
+.book-card>div:not(.book-cover-container) {
+    padding-left: var(--spacing-md);
+    padding-right: var(--spacing-md);
+}
+
+.book-card .book-header {
+    padding-top: var(--spacing-md);
+}
+
+.book-card>div:last-child {
+    padding-bottom: var(--spacing-md);
+}

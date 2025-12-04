@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="LIBRISMUNDIS - Gestor de libros profesional con seguimiento de progreso, calificaciones y comentarios">
+    <title>LIBRISMUNDIS - Gestor de Libros</title>
+    <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="enhancements.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0f172a">
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <h1 class="logo" id="logo">
+                LIBRISMUNDIS
+                <span class="logo-author">por Juanpe Narro</span>
+            </h1>
+
+            <!-- User Stats Container -->
+            <div id="userStats" class="user-stats">
+                <!-- Injected by JS -->
+            </div>
+
+            <div class="search-container">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="searchInput" class="search-input"
+                    placeholder="Buscar libros, autores, comentarios..." aria-label="Buscar libros">
+            </div>
+
+            <div class="header-actions">
+                <button class="btn btn-primary" id="authBtn" aria-label="Iniciar sesión">
+                    <span>👤 Iniciar Sesión</span>
+                </button>
+                <button class="btn btn-icon" id="themeToggle" aria-label="Cambiar tema">
+                    <span class="theme-icon">🌙</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="nav-tabs-container">
+            <div class="nav-tabs">
+                <button class="nav-tab active" data-view="library">📚 Biblioteca</button>
+                <button class="nav-tab" data-view="vocabulary">🧠 Vocabulario</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="container">
+        <!-- LIBRARY VIEW -->
+        <section id="libraryView">
+            <!-- Statistics Section -->
+            <section class="statistics-section">
+                <div class="stats-grid">
+                    <div class="stat-card total">
+                        <div class="stat-icon">📚</div>
+                        <div class="stat-info">
+                            <h3>Total Libros</h3>
+                            <div class="stat-number" id="statTotal">0</div>
+                        </div>
+                    </div>
+                    <div class="stat-card want-to-read">
+                        <div class="stat-icon">🎯</div>
+                        <div class="stat-info">
+                            <h3>Quiero leer</h3>
+                            <div class="stat-number" id="statWantToRead">0</div>
+                        </div>
+                    </div>
+                    <div class="stat-card reading">
+                        <div class="stat-icon">📖</div>
+                        <div class="stat-info">
+                            <h3>Leyendo</h3>
+                            <div class="stat-number" id="statReading">0</div>
+                        </div>
+                    </div>
+                    <div class="stat-card completed">
+                        <div class="stat-icon">✅</div>
+                        <div class="stat-info">
+                            <h3>Terminados</h3>
+                            <div class="stat-number" id="statCompleted">0</div>
+                        </div>
+                    </div>
+                    <div class="stat-card abandoned">
+                        <div class="stat-icon">❌</div>
+                        <div class="stat-info">
+                            <h3>Abandonados</h3>
+                            <div class="stat-number" id="statAbandoned">0</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Controls Section -->
+            <section class="controls">
+                <!-- Category Tabs -->
+                <div class="controls-row">
+                    <div class="category-tabs" role="tablist" aria-label="Categorías de libros">
+                        <button class="category-tab active" data-category="all" role="tab" aria-selected="true">
+                            📚 Todos
+                        </button>
+                        <button class="category-tab" data-category="want_to_read" role="tab" aria-selected="false">
+                            🎯 Quiero leer
+                        </button>
+                        <button class="category-tab" data-category="reading" role="tab" aria-selected="false">
+                            📖 Leyendo
+                        </button>
+                        <button class="category-tab" data-category="completed" role="tab" aria-selected="false">
+                            ✅ Terminado
+                        </button>
+                        <button class="category-tab" data-category="abandoned" role="tab" aria-selected="false">
+                            ❌ No terminado
+                        </button>
+                    </div>
+
+                    <button class="btn btn-primary" id="addBookBtn">
+                        ➕ Agregar Libro
+                    </button>
+                </div>
+
+                <!-- Filter and Data Controls -->
+                <div class="controls-row">
+                    <div class="filter-controls">
+                        <div class="select-wrapper">
+                            <select id="sortSelect" class="select-input" aria-label="Ordenar libros">
+                                <option value="date_desc">Más recientes</option>
+                                <option value="date_asc">Más antiguos</option>
+                                <option value="title_asc">Título (A-Z)</option>
+                                <option value="title_desc">Título (Z-A)</option>
+                                <option value="author_asc">Autor (A-Z)</option>
+                                <option value="author_desc">Autor (Z-A)</option>
+                                <option value="rating_desc">Mejor calificados</option>
+                                <option value="rating_asc">Peor calificados</option>
+                            </select>
+                        </div>
+                        <div class="select-wrapper">
+                            <select id="languageFilter" class="select-input" aria-label="Filtrar por idioma">
+                                <option value="all">🌐 Todos los idiomas</option>
+                                <option value="es">🇪🇸 Español</option>
+                                <option value="en">🇬🇧 Inglés</option>
+                                <option value="fr">🇫🇷 Francés</option>
+                                <option value="de">🇩🇪 Alemán</option>
+                                <option value="it">🇮🇹 Italiano</option>
+                                <option value="pt">🇵🇹 Portugués</option>
+                                <option value="other">🌍 Otro</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Books Grid -->
+            <div id="booksGrid" class="books-grid">
+                <!-- Books will be inserted here by JavaScript -->
+            </div>
+
+            <!-- Pagination for Books -->
+            <div id="booksPagination" class="pagination-container"></div>
+
+            <!-- Empty State -->
+            <div id="emptyState" class="empty-state hidden">
+                <div class="empty-state-icon">📚</div>
+                <h2 class="empty-state-title">No hay libros aún</h2>
+                <p class="empty-state-text">Comienza agregando tu primer libro a la biblioteca</p>
+                <button class="btn btn-primary" onclick="document.getElementById('addBookBtn').click()">
+                    ➕ Agregar Primer Libro
+                </button>
+            </div>
+        </section>
+
+        <!-- VOCABULARY VIEW -->
+        <section id="vocabularyView" class="hidden">
+            <section class="controls">
+                <div class="controls-row">
+                    <div class="filter-controls">
+                        <div class="select-wrapper">
+                            <select id="vocabLanguageFilter" class="select-input">
+                                <option value="all">🌐 Todos los idiomas</option>
+                                <option value="es">🇪🇸 Español</option>
+                                <option value="en">🇬🇧 Inglés</option>
+                                <option value="fr">🇫🇷 Francés</option>
+                                <option value="de">🇩🇪 Alemán</option>
+                                <option value="it">🇮🇹 Italiano</option>
+                                <option value="pt">🇵🇹 Portugués</option>
+                                <option value="other">🌍 Otro</option>
+                            </select>
+                        </div>
+                        <div class="search-container" style="width: 300px;">
+                            <span class="search-icon">🔍</span>
+                            <input type="text" id="vocabSearchInput" class="search-input"
+                                placeholder="Buscar palabras...">
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary" id="addWordBtn">
+                        ➕ Agregar Palabra
+                    </button>
+                </div>
+            </section>
+
+            <div id="vocabularyGrid" class="vocabulary-grid">
+                <!-- Words will be inserted here -->
+            </div>
+
+            <!-- Pagination for Vocabulary -->
+            <div id="vocabPagination" class="pagination-container"></div>
+
+            <div id="vocabEmptyState" class="empty-state hidden">
+                <div class="empty-state-icon">🧠</div>
+                <h2 class="empty-state-title">Tu vocabulario está vacío</h2>
+                <p class="empty-state-text">Agrega palabras nuevas para construir tu diccionario personal</p>
+                <button class="btn btn-primary" onclick="document.getElementById('addWordBtn').click()">
+                    ➕ Agregar Primera Palabra
+                </button>
+            </div>
+        </section>
+
+        <!-- CHAT VIEW -->
+        <section id="chatView" class="hidden">
+            <div class="chat-container">
+                <div class="chat-header">
+                    <div class="chat-header-content">
+                        <div class="chat-avatar">💬</div>
+                        <div>
+                            <h2 class="chat-title">Syl, tu acompañante de lectura</h2>
+                            <p class="chat-subtitle">Habla sobre libros, cómics y sus adaptaciones</p>
+                        </div>
+                    </div>
+                    <button class="btn btn-icon" id="chatSettingsBtn" title="Configurar API Key">
+                        ⚙️
+                    </button>
+                </div>
+
+                <div class="chat-messages" id="chatMessages">
+                    <div class="chat-welcome">
+                        <div class="welcome-icon">📚</div>
+                        <h3>¡Hola! Soy Syl</h3>
+                        <p>Tu compañera de lectura impulsada por IA. Puedo ayudarte a:</p>
+                        <ul>
+                            <li>Debatir sobre tus libros favoritos</li>
+                            <li>Descubrir nuevas lecturas</li>
+                            <li>Analizar personajes y tramas</li>
+                            <li>Comparar libros con sus adaptaciones</li>
+                        </ul>
+                        <p class="welcome-note">💡 Solo hablo de libros, cómics y literatura. ¡Pregúntame lo que
+                            quieras!</p>
+                    </div>
+                </div>
+
+                <div class="chat-input-container">
+                    <textarea id="chatInput" class="chat-input" placeholder="Escribe tu mensaje sobre libros..."
+                        rows="1"></textarea>
+                    <button class="btn btn-primary chat-send-btn" id="chatSendBtn">
+                        Enviar ✈️
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Data Management Section -->
+    <section class="data-management"
+        style="margin-top: 3rem; padding: 2rem; background: var(--bg-secondary); border-radius: var(--radius-lg); max-width: 1200px; margin-left: auto; margin-right: auto; margin-bottom: 3rem;">
+        <h2 style="margin-bottom: 1rem;">Gestión de Datos</h2>
+        <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+            <button id="exportBtn" class="btn btn-secondary">
+                📤 Exportar Copia de Seguridad
+            </button>
+
+            <div class="file-input-wrapper">
+                <label for="importInput" class="btn btn-secondary" style="cursor: pointer;">
+                    📥 Importar Copia (JSON)
+                </label>
+                <input type="file" id="importInput" accept=".json" style="display: none;">
+            </div>
+
+            <div class="file-input-wrapper">
+                <label for="importGoodreadsInput" class="btn btn-primary" style="cursor: pointer;">
+                    📚 Importar de Goodreads (CSV)
+                </label>
+                <input type="file" id="importGoodreadsInput" accept=".csv" style="display: none;">
+            </div>
+        </div>
+        <p style="margin-top: 1rem; font-size: 0.9rem; color: var(--text-secondary);">
+            Nota: La importación de Goodreads buscará automáticamente las portadas de los libros en segundo plano.
+        </p>
+    </section>
+
+    <!-- Add Book Modal -->
+    <div id="addBookModal" class="modal" role="dialog" aria-labelledby="addBookModalTitle" aria-modal="true">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="addBookModalTitle" class="modal-title">Agregar Nuevo Libro</h2>
+                <button class="modal-close" id="closeAddModal" aria-label="Cerrar modal">×</button>
+            </div>
+
+            <div style="margin-bottom: 1.5rem;">
+                <button type="button" class="btn btn-secondary" id="openSearchBtn"
+                    style="width: 100%; display: flex; justify-content: center; align-items: center; gap: 0.5rem;">
+                    🔍 Buscar en Internet (Autocompletar)
+                </button>
+            </div>
+
+            <form id="addBookForm">
+                <div class="form-group">
+                    <label for="bookTitle" class="form-label">Título del Libro *</label>
+                    <input type="text" id="bookTitle" class="form-input" required placeholder="Ej: Cien años de soledad"
+                        aria-required="true">
+                </div>
+
+                <div class="form-group">
+                    <label for="bookAuthor" class="form-label">Autor *</label>
+                    <input type="text" id="bookAuthor" class="form-input" required
+                        placeholder="Ej: Gabriel García Márquez" aria-required="true">
+                </div>
+
+                <div class="form-group">
+                    <label for="bookTotalPages" class="form-label">Total de Páginas *</label>
+                    <input type="number" id="bookTotalPages" class="form-input" required min="1" placeholder="Ej: 432"
+                        aria-required="true">
+                </div>
+
+                <div class="form-group">
+                    <label for="bookCategory" class="form-label">Categoría *</label>
+                    <select id="bookCategory" class="form-input" required aria-required="true">
+                        <option value="want_to_read">🎯 Quiero leer</option>
+                        <option value="reading">📖 Leyendo</option>
+                        <option value="completed">✅ Terminado</option>
+                        <option value="abandoned">❌ No terminado</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="bookLanguage" class="form-label">Idioma *</label>
+                    <select id="bookLanguage" class="form-input" required aria-required="true">
+                        <option value="es">🇪🇸 Español</option>
+                        <option value="en">🇬🇧 Inglés</option>
+                        <option value="fr">🇫🇷 Francés</option>
+                        <option value="de">🇩🇪 Alemán</option>
+                        <option value="it">🇮🇹 Italiano</option>
+                        <option value="pt">🇵🇹 Portugués</option>
+                        <option value="other">🌍 Otro</option>
+                    </select>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group" style="margin: 0;">
+                        <label for="bookCurrentPage" class="form-label">Página Actual (opcional)</label>
+                        <input type="number" id="bookCurrentPage" class="form-input" min="0" placeholder="Ej: 150">
+                    </div>
+                    <div class="form-group" style="margin: 0;">
+                        <label for="bookPercentage" class="form-label">Porcentaje (opcional)</label>
+                        <input type="number" id="bookPercentage" class="form-input" min="0" max="100"
+                            placeholder="Ej: 35">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="bookRating" class="form-label">Calificación (opcional, 1-10)</label>
+                    <input type="number" id="bookRating" class="form-input" min="1" max="10" step="0.1"
+                        placeholder="Ej: 8.5">
+                </div>
+
+                <div class="form-group">
+                    <label for="bookComments" class="form-label">Comentarios (opcional)</label>
+                    <textarea id="bookComments" class="form-textarea"
+                        placeholder="Escribe tus pensamientos sobre el libro..."></textarea>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" id="cancelAddBook">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        Guardar Libro
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Search Book Modal -->
+    <div id="searchBookModal" class="modal" role="dialog" aria-labelledby="searchModalTitle" aria-modal="true">
+        <div class="modal-content" style="max-width: 600px; max-height: 80vh; display: flex; flex-direction: column;">
+            <div class="modal-header">
+                <h2 id="searchModalTitle" class="modal-title">Buscar Libro en Internet</h2>
+                <button class="modal-close" id="closeSearchModal" aria-label="Cerrar modal">×</button>
+            </div>
+
+            <div class="search-online-container" style="padding: 1rem 0;">
+                <div class="search-container" style="width: 100%; margin-bottom: 1rem;">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" id="onlineSearchInput" class="search-input"
+                        placeholder="Escribe el título o autor..." aria-label="Buscar libro online">
+                </div>
+                <button class="btn btn-primary" id="triggerSearchBtn" style="width: 100%;">Buscar</button>
+            </div>
+
+            <div id="searchResults" class="search-results" style="flex: 1; overflow-y: auto; min-height: 200px;">
+                <!-- Results will be inserted here -->
+                <div class="empty-state-text" style="text-align: center; padding: 2rem;">
+                    Escribe algo para buscar...
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Book Details Modal -->
+    <div id="bookDetailsModal" class="modal" role="dialog" aria-labelledby="detailTitle" aria-modal="true">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Detalles del Libro</h2>
+                <button class="modal-close" id="closeDetailsModal" aria-label="Cerrar modal">×</button>
+            </div>
+
+            <div class="book-details-content">
+                <div class="detail-section">
+                    <input type="text" id="detailTitle" class="form-input"
+                        style="font-size: 1.3rem; font-weight: 600; margin-bottom: 0.5rem;"
+                        placeholder="Título del libro">
+                    <input type="text" id="detailAuthor" class="form-input"
+                        style="font-size: 1rem; color: var(--text-secondary);" placeholder="Autor del libro">
+                    <div style="display: flex; gap: 0.5rem; margin-top: 1rem; flex-wrap: wrap;">
+                        <span id="detailCategory" class="book-category-badge">Categoría</span>
+                        <span id="detailLanguage" class="book-language-badge">Idioma</span>
+                    </div>
+                </div>
+
+                <!-- Progress Section -->
+                <div class="detail-section">
+                    <h3 class="detail-section-title">📊 Progreso de Lectura</h3>
+                    <div class="detail-info">
+                        <div class="detail-item">
+                            <span class="detail-label">Total Páginas:</span>
+                            <span class="detail-value" id="detailTotalPages">0</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Progreso:</span>
+                            <span class="detail-value" id="detailProgressPercentage">0%</span>
+                        </div>
+                    </div>
+
+                    <div class="progress-bar-container" style="margin-top: 1rem;">
+                        <div id="detailProgressBar" class="progress-bar" style="width: 0%"></div>
+                    </div>
+
+                    <div class="progress-edit-controls">
+                        <div class="form-group" style="margin: 0; flex: 1;">
+                            <label for="detailCurrentPage" class="form-label">Página Actual</label>
+                            <input type="number" id="detailCurrentPage" class="form-input" min="0" placeholder="0">
+                        </div>
+                        <div class="form-group" style="margin: 0; flex: 1;">
+                            <label for="detailPercentage" class="form-label">Porcentaje</label>
+                            <input type="number" id="detailPercentage" class="form-input" min="0" max="100"
+                                placeholder="0">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Rating Section -->
+                <div class="detail-section">
+                    <h3 class="detail-section-title">⭐ Calificación</h3>
+                    <input type="number" id="detailRating" class="form-input" min="1" max="10" step="0.1"
+                        placeholder="Ej: 8.5">
+                </div>
+
+                <!-- Comments Section -->
+                <div class="detail-section">
+                    <h3 class="detail-section-title">💭 Comentarios</h3>
+                    <textarea id="detailComments" class="form-textarea"
+                        placeholder="Escribe tus pensamientos sobre el libro..."></textarea>
+                </div>
+
+                <!-- Category and Language Edit -->
+                <div class="detail-section">
+                    <h3 class="detail-section-title">🏷️ Categoría e Idioma</h3>
+                    <div class="form-row">
+                        <div class="form-group" style="margin: 0;">
+                            <label for="detailCategorySelect" class="form-label">Categoría</label>
+                            <select id="detailCategorySelect" class="form-input">
+                                <option value="want_to_read">🎯 Quiero leer</option>
+                                <option value="reading">📖 Leyendo</option>
+                                <option value="completed">✅ Terminado</option>
+                                <option value="abandoned">❌ No terminado</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="margin: 0;">
+                            <label for="detailLanguageSelect" class="form-label">Idioma</label>
+                            <select id="detailLanguageSelect" class="form-input">
+                                <option value="es">🇪🇸 Español</option>
+                                <option value="en">🇬🇧 Inglés</option>
+                                <option value="fr">🇫🇷 Francés</option>
+                                <option value="de">🇩🇪 Alemán</option>
+                                <option value="it">🇮🇹 Italiano</option>
+                                <option value="pt">🇵🇹 Portugués</option>
+                                <option value="other">🌍 Otro</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="modal-actions">
+                    <button class="btn btn-danger" id="deleteBookBtn">
+                        🗑️ Eliminar
+                    </button>
+                    <button class="btn btn-primary" id="saveBookBtn">
+                        💾 Guardar Cambios
+                    </button>
+                </div>
+            </div>
+
+            <input type="hidden" id="currentBookId">
+        </div>
+    </div>
+
+    <!-- Add Word Modal -->
+    <div id="addWordModal" class="modal" role="dialog" aria-labelledby="addWordModalTitle" aria-modal="true">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="addWordModalTitle" class="modal-title">Agregar Nueva Palabra</h2>
+                <button class="modal-close" id="closeAddWordModal" aria-label="Cerrar modal">×</button>
+            </div>
+
+            <form id="addWordForm">
+                <div class="form-group">
+                    <label for="wordText" class="form-label">Palabra *</label>
+                    <input type="text" id="wordText" class="form-input" required placeholder="Ej: Serendipity"
+                        aria-required="true">
+                </div>
+
+                <div class="form-group">
+                    <label for="wordLanguage" class="form-label">Idioma *</label>
+                    <select id="wordLanguage" class="form-input" required aria-required="true">
+                        <option value="es">🇪🇸 Español</option>
+                        <option value="en">🇬🇧 Inglés</option>
+                        <option value="fr">🇫🇷 Francés</option>
+                        <option value="de">🇩🇪 Alemán</option>
+                        <option value="it">🇮🇹 Italiano</option>
+                        <option value="pt">🇵🇹 Portugués</option>
+                        <option value="other">🌍 Otro</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="wordDefinition" class="form-label">Definición / Significado *</label>
+                    <textarea id="wordDefinition" class="form-textarea" required
+                        placeholder="Escribe el significado de la palabra..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="wordContext" class="form-label">Contexto / Frase de ejemplo *</label>
+                    <textarea id="wordContext" class="form-textarea" required
+                        placeholder="Escribe una frase donde aparezca la palabra..."></textarea>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" id="cancelAddWord">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        Guardar Palabra
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <!-- Auth Modal -->
+    <div id="authModal" class="modal" role="dialog" aria-labelledby="authModalTitle" aria-modal="true">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="authModalTitle" class="modal-title">Iniciar Sesión</h2>
+                <button class="modal-close" id="closeAuthModal" aria-label="Cerrar modal">×</button>
+            </div>
+
+            <!-- Login Form -->
+            <div id="loginForm" class="auth-form">
+                <form id="loginFormElement">
+                    <div class="form-group">
+                        <label for="loginEmail" class="form-label">Correo Electrónico</label>
+                        <input type="email" id="loginEmail" class="form-input" required placeholder="tu@email.com"
+                            aria-required="true">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="loginPassword" class="form-label">Contraseña</label>
+                        <input type="password" id="loginPassword" class="form-input" required placeholder="••••••••"
+                            aria-required="true">
+                    </div>
+
+                    <div class="modal-actions">
+                        <button type="submit" class="btn btn-primary" style="width: 100%;">
+                            Iniciar Sesión
+                        </button>
+                    </div>
+                </form>
+
+                <div style="text-align: center; margin-top: 1rem; color: var(--text-secondary);">
+                    ¿No tienes cuenta?
+                    <button type="button" class="btn-link" id="showRegisterBtn">Regístrate</button>
+                </div>
+            </div>
+
+            <!-- Register Form -->
+            <div id="registerForm" class="auth-form hidden">
+                <form id="registerFormElement">
+                    <div class="form-group">
+                        <label for="registerName" class="form-label">Nombre</label>
+                        <input type="text" id="registerName" class="form-input" required placeholder="Tu nombre"
+                            aria-required="true">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="registerEmail" class="form-label">Correo Electrónico</label>
+                        <input type="email" id="registerEmail" class="form-input" required placeholder="tu@email.com"
+                            aria-required="true">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="registerPassword" class="form-label">Contraseña</label>
+                        <input type="password" id="registerPassword" class="form-input" required placeholder="••••••••"
+                            aria-required="true" minlength="6">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="registerPasswordConfirm" class="form-label">Confirmar Contraseña</label>
+                        <input type="password" id="registerPasswordConfirm" class="form-input" required
+                            placeholder="••••••••" aria-required="true" minlength="6">
+                    </div>
+
+                    <div class="modal-actions">
+                        <button type="submit" class="btn btn-primary" style="width: 100%;">
+                            Crear Cuenta
+                        </button>
+                    </div>
+                </form>
+
+                <div style="text-align: center; margin-top: 1rem; color: var(--text-secondary);">
+                    ¿Ya tienes cuenta?
+                    <button type="button" class="btn-link" id="showLoginBtn">Inicia sesión</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Word Details Modal -->
+    <div id="wordDetailsModal" class="modal" role="dialog" aria-labelledby="detailWordTitle" aria-modal="true">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Editar Palabra</h2>
+                <button class="modal-close" id="closeWordDetailsModal" aria-label="Cerrar modal">×</button>
+            </div>
+
+            <form id="editWordForm">
+                <div class="form-group">
+                    <label for="detailWordText" class="form-label">Palabra</label>
+                    <input type="text" id="detailWordText" class="form-input" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="detailWordLanguage" class="form-label">Idioma</label>
+                    <select id="detailWordLanguage" class="form-input" required>
+                        <option value="es">🇪🇸 Español</option>
+                        <option value="en">🇬🇧 Inglés</option>
+                        <option value="fr">🇫🇷 Francés</option>
+                        <option value="de">🇩🇪 Alemán</option>
+                        <option value="it">🇮🇹 Italiano</option>
+                        <option value="pt">🇵🇹 Portugués</option>
+                        <option value="other">🌍 Otro</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="detailWordDefinition" class="form-label">Definición / Significado</label>
+                    <textarea id="detailWordDefinition" class="form-textarea" required rows="4"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="detailWordContext" class="form-label">Contexto / Frase de ejemplo</label>
+                    <textarea id="detailWordContext" class="form-textarea" required rows="3"></textarea>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-danger" id="deleteWordBtn">
+                        🗑️ Eliminar
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        💾 Guardar Cambios
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="app.js"></script>
+    <script src="chat-ai.js"></script>
+    <script src="book-search-api.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(registration => {
+                        console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                    })
+                    .catch(err => {
+                        console.log('ServiceWorker registration failed: ', err);
+                    });
+            });
+        }
+    </script>
+    <div id="notificationContainer" class="notification-container"></div>
+</body>
+
+</html>
