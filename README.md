@@ -25,10 +25,6 @@ Haz que la lectura sea un juego y mantén la motivación alta:
 *   **Rachas (Streaks)**: Mantén tu racha de lectura diaria.
 *   **Estadísticas en Tiempo Real**: Visualiza tu nivel y progreso en la barra superior.
 
-### 🤖 Chatbot IA (Syl)
-*   **Asistente de Lectura**: Chatea con "Syl", tu compañera IA impulsada por Gemini.
-*   **Recomendaciones**: Pide sugerencias de libros o discute tramas y personajes.
-
 ### 🧠 Vocabulario y Aprendizaje
 *   **Diccionario Personal**: Guarda palabras nuevas con su definición y contexto.
 *   **Filtros de Idioma**: Organiza tu vocabulario para tus estudios de idiomas.
@@ -42,7 +38,6 @@ Haz que la lectura sea un juego y mantén la motivación alta:
 Construido con tecnologías web estándar para máxima compatibilidad:
 *   **HTML5 & CSS3** (Variables CSS, Flexbox, Grid, Animaciones)
 *   **JavaScript Moderno** (ES6+)
-*   **Google Gemini API** (Para el Chatbot)
 *   **PWA Ready**: Preparado para funcionar como aplicación instalable off-line.
 
 ## 🛠️ Instalación y Uso
@@ -57,3 +52,4 @@ Construido con tecnologías web estándar para máxima compatibilidad:
 
 ## 📄 Licencia
 Este proyecto es de uso libre para fines personales y educativos.
+
